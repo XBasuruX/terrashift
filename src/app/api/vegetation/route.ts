@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import modisFixture from '../../../../backend/fixtures/modis_anuradhapura_2023_2025.json';
+import modisFixture from '@/data/fixtures/modis_anuradhapura_2023_2025.json';
 
 const NDVI = '250m_16_days_NDVI';
 const RELIABILITY = '250m_16_days_pixel_reliability';

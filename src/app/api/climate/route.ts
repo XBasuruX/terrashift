@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import powerFixture from '../../../../backend/fixtures/power_anuradhapura_2023_2025.json';
+import powerFixture from '@/data/fixtures/power_anuradhapura_2023_2025.json';
 
 const FIELDS: Record<string, string> = {
   T2M: 'temperature',
