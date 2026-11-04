@@ -5,6 +5,7 @@ import type { Farm, Scenario, Mode, Climate, Catalog, Analysis, View } from './t
 import { post } from './api';
 import { isSavedFarm } from './validation';
 import { stableJSON } from './stable';
+import { DEFAULT_CATALOG } from './catalogData';
 
 export function useResource<T>(endpoint: string, body: unknown, enabled = true) {
   const [state, setState] = useState<{ data: T | null; loading: boolean; error: string | null }>({
@@ -49,7 +50,7 @@ function useTerraState() {
   const [learning, setLearning] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [storageWarning, setStorageWarning] = useState<string | null>(null);
-  const [catalog, setCatalog] = useState<Catalog | null>(null);
+  const [catalog, setCatalog] = useState<Catalog | null>(DEFAULT_CATALOG);
   const [catalogError, setCatalogError] = useState<string | null>(null);
   const [selected, setSelected] = useState('balanced');
   useEffect(() => {
@@ -86,11 +87,11 @@ function useTerraState() {
     }
     fetch('/api/catalog')
       .then((r) => {
-        if (!r.ok) throw Error('Backend unavailable. Start FastAPI on port 8000.');
+        if (!r.ok) return DEFAULT_CATALOG;
         return r.json();
       })
       .then(setCatalog)
-      .catch((e) => setCatalogError(e.message));
+      .catch(() => setCatalog(DEFAULT_CATALOG));
   }, []);
   useEffect(() => {
     if (hydrated)

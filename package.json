@@ -2,6 +2,9 @@
   "name": "terrashift",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "postinstall": "node scripts/prepare-map.mjs",
     "dev": "next dev --hostname 127.0.0.1",
