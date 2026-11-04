@@ -1,11 +1,11 @@
 'use client';
 import { TerraProvider } from '@/lib/store';
-import { XFarmShell } from '@/components/xfarm/XFarmShell';
+import { Shell } from '@/components/Shell';
 
 export default function Page() {
   return (
     <TerraProvider>
-      <XFarmShell />
+      <Shell />
     </TerraProvider>
   );
 }
