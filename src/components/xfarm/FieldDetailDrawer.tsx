@@ -14,22 +14,29 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import type { XFarmField } from './xfarmData';
+import { AddActivityModal } from './AddActivityModal';
 
 interface FieldDetailDrawerProps {
   field: XFarmField | null;
   onClose: () => void;
   onOpenRotationStudio?: () => void;
+  lang?: 'EN' | 'IT';
+  onAddActivityToField?: (fieldId: string, activity: any) => void;
 }
 
 export function FieldDetailDrawer({
   field,
   onClose,
   onOpenRotationStudio,
+  lang = 'EN',
+  onAddActivityToField,
 }: FieldDetailDrawerProps) {
   const [activeTab, setActiveTab] = useState<'crop' | 'activities' | 'notes' | 'forecasts'>('crop');
-  const [newActivityOpen, setNewActivityOpen] = useState(false);
+  const [isAddActivityOpen, setIsAddActivityOpen] = useState(false);
 
   if (!field) return null;
+
+  const isIt = lang === 'IT';
 
   return (
     <div className="xfarm-field-drawer">
@@ -47,18 +54,18 @@ export function FieldDetailDrawer({
         </button>
       </div>
 
-      {/* SUB BAR WITH METADATA */}
+      {/* SUB BAR WITH METADATA (MATCHING SCREENSHOTS 7 & 10) */}
       <div className="xfarm-field-subbar">
         <div>
-          <span style={{ opacity: 0.7 }}>Surface: </span>
+          <span style={{ opacity: 0.7 }}>{isIt ? 'Area totale: ' : 'Surface: '}</span>
           <strong>{field.surface_ha.toFixed(2)} ha</strong>
         </div>
         <div>
-          <span style={{ opacity: 0.7 }}>Group: </span>
+          <span style={{ opacity: 0.7 }}>{isIt ? 'Gruppo: ' : 'Group: '}</span>
           <strong>{field.group}</strong>
         </div>
         <div>
-          <span style={{ opacity: 0.7 }}>Type: </span>
+          <span style={{ opacity: 0.7 }}>{isIt ? 'Tipo: ' : 'Type: '}</span>
           <strong>{field.farmingType}</strong>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -67,41 +74,43 @@ export function FieldDetailDrawer({
         </div>
       </div>
 
-      {/* TABS */}
+      {/* TABS (MATCHING SCREENSHOT 7 & 10) */}
       <div className="xfarm-tab-bar">
         <button
           className={`xfarm-tab-btn ${activeTab === 'crop' ? 'active' : ''}`}
           onClick={() => setActiveTab('crop')}
         >
-          Crop (Rotation)
+          {isIt ? 'Coltura' : 'Crop'}
         </button>
         <button
           className={`xfarm-tab-btn ${activeTab === 'activities' ? 'active' : ''}`}
           onClick={() => setActiveTab('activities')}
         >
-          Activities ({field.activities.length})
+          {isIt ? `Attività (${field.activities.length})` : `Activities (${field.activities.length})`}
         </button>
         <button
           className={`xfarm-tab-btn ${activeTab === 'notes' ? 'active' : ''}`}
           onClick={() => setActiveTab('notes')}
         >
-          Notes & Photos
+          {isIt ? 'Note & Foto' : 'Notes'}
         </button>
         <button
           className={`xfarm-tab-btn ${activeTab === 'forecasts' ? 'active' : ''}`}
           onClick={() => setActiveTab('forecasts')}
         >
-          Forecasts
+          {isIt ? 'Previsionali' : 'Forecasts'}
         </button>
       </div>
 
       {/* TAB CONTENT */}
       <div className="xfarm-tab-content">
-        {/* CROP ROTATIONS TAB */}
+        {/* CROP ROTATIONS TAB (MATCHING SCREENSHOT 7 & 10) */}
         {activeTab === 'crop' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h4 style={{ margin: 0, fontSize: '14px', color: '#1e293b' }}>Yearly Crop Rotation</h4>
+              <h4 style={{ margin: 0, fontSize: '14px', color: '#1e293b' }}>
+                {isIt ? 'Colture Annuali' : 'Yearly Crop Rotation'}
+              </h4>
               {onOpenRotationStudio && (
                 <button
                   onClick={onOpenRotationStudio}
@@ -116,11 +125,12 @@ export function FieldDetailDrawer({
                     color: '#334155',
                   }}
                 >
-                  Analyze in Rotation Studio →
+                  {isIt ? 'Analizza in Studio →' : 'Analyze in Studio →'}
                 </button>
               )}
             </div>
 
+            {/* THREE COLUMNS / CARDS FOR 2024, 2023, 2022 (AS IN SCREENSHOT 7 & 10) */}
             {field.rotations.map((r) => (
               <div key={r.year} className="xfarm-rotation-card" style={{ borderLeftColor: r.color }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -156,6 +166,9 @@ export function FieldDetailDrawer({
 
                 <div style={{ marginTop: '8px', textAlign: 'right' }}>
                   <button
+                    onClick={() => {
+                      alert(`${isIt ? 'Modifica coltura' : 'Edit crop'}: ${r.crop} (${r.year})`);
+                    }}
                     style={{
                       background: '#ffffff',
                       border: '1px solid #cbd5e1',
@@ -167,7 +180,7 @@ export function FieldDetailDrawer({
                       cursor: 'pointer',
                     }}
                   >
-                    + Edit Crop
+                    {isIt ? '+ Aggiungi Coltura' : '+ Add Crop'}
                   </button>
                 </div>
               </div>
@@ -175,25 +188,27 @@ export function FieldDetailDrawer({
           </div>
         )}
 
-        {/* ACTIVITIES TAB */}
+        {/* ACTIVITIES TAB (MATCHING SCREENSHOT 6 & 10) */}
         {activeTab === 'activities' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h4 style={{ margin: 0, fontSize: '14px', color: '#1e293b' }}>Field Operations</h4>
+              <h4 style={{ margin: 0, fontSize: '14px', color: '#1e293b' }}>
+                {isIt ? 'Attività in Campo' : 'Field Operations'}
+              </h4>
               <button
-                onClick={() => setNewActivityOpen(true)}
+                onClick={() => setIsAddActivityOpen(true)}
                 style={{
                   background: 'var(--xfarm-green)',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '6px',
-                  padding: '4px 10px',
-                  fontSize: '11px',
+                  padding: '5px 12px',
+                  fontSize: '12px',
                   fontWeight: 600,
                   cursor: 'pointer',
                 }}
               >
-                + New activity
+                {isIt ? 'Registra Attività' : '+ New activity'}
               </button>
             </div>
 
@@ -201,16 +216,31 @@ export function FieldDetailDrawer({
               <div key={a.id} className="xfarm-activity-item">
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <strong style={{ fontSize: '13px', color: '#1e293b' }}>{a.title}</strong>
+                    <strong style={{ fontSize: '13px', color: '#1e293b' }}>
+                      {isIt
+                        ? a.title === 'Defending'
+                          ? 'Difesa'
+                          : a.title === 'Irrigating'
+                          ? 'Irrigazione'
+                          : a.title === 'Harvesting'
+                          ? 'Raccolta'
+                          : a.title
+                        : a.title}
+                    </strong>
                     <span style={{ fontSize: '11px', color: '#64748b' }}>&middot; {a.crop}</span>
                   </div>
                   <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
-                    Date: {a.date}
+                    {isIt ? 'Data: ' : 'Date: '}
+                    {a.date}
                   </div>
                 </div>
 
                 <span className={`xfarm-status-pill ${a.status.toLowerCase()}`}>
-                  {a.status === 'Done' ? 'Done' : 'Expired'}
+                  {isIt
+                    ? a.status === 'Done'
+                      ? 'Fatto'
+                      : 'Scaduta'
+                    : a.status}
                 </span>
               </div>
             ))}
@@ -220,7 +250,9 @@ export function FieldDetailDrawer({
         {/* SCOUTING NOTES TAB */}
         {activeTab === 'notes' && (
           <div>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#1e293b' }}>Field Observations</h4>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#1e293b' }}>
+              {isIt ? 'Osservazioni in Campo' : 'Field Observations'}
+            </h4>
             <div
               style={{
                 background: '#f8fafc',
@@ -267,7 +299,9 @@ export function FieldDetailDrawer({
         {/* FORECASTS TAB */}
         {activeTab === 'forecasts' && (
           <div>
-            <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#1e293b' }}>NASA POWER 7-Day Forecast</h4>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#1e293b' }}>
+              {isIt ? 'Previsioni Meteo NASA POWER' : 'NASA POWER 7-Day Forecast'}
+            </h4>
             <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>
               Interpolated agrometeorology for lat {field.center[0].toFixed(3)}°, lng {field.center[1].toFixed(3)}°
             </div>
@@ -315,11 +349,29 @@ export function FieldDetailDrawer({
           justifyContent: 'center',
           cursor: 'pointer',
         }}
-        onClick={() => alert('New Field Operation dialog')}
-        title="Add new activity or scouting note"
+        onClick={() => setIsAddActivityOpen(true)}
+        title="Add new activity"
       >
         <Plus size={24} />
       </button>
+
+      {/* ADD ACTIVITY MODAL */}
+      <AddActivityModal
+        isOpen={isAddActivityOpen}
+        onClose={() => setIsAddActivityOpen(false)}
+        fieldName={field.name}
+        cropName={field.currentCrop}
+        onAddActivity={(act) => {
+          if (onAddActivityToField) {
+            onAddActivityToField(field.id, act);
+          } else {
+            field.activities.unshift({
+              id: `act-${Date.now()}`,
+              ...act,
+            });
+          }
+        }}
+      />
     </div>
   );
 }

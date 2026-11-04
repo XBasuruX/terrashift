@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Ruler,
   Layers,
@@ -17,18 +17,25 @@ import {
   Maximize2,
   MapPin,
   Sparkles,
+  Plus,
+  PenTool,
+  Upload,
+  Camera,
+  FileText,
+  Check,
+  X,
 } from 'lucide-react';
 import {
-  XFARM_FIELDS,
-  XFARM_PROBES,
   CROP_DISTRIBUTION,
   CROP_LEGEND,
   type XFarmField,
   type SoilMoistureProbe,
 } from './xfarmData';
 import { RulerTool } from './RulerTool';
+import { CreateFieldModal } from './CreateFieldModal';
 
 interface XFarmMapProps {
+  fields: XFarmField[];
   selectedField: XFarmField | null;
   onSelectField: (field: XFarmField) => void;
   onSelectProbe: (probe: SoilMoistureProbe) => void;
@@ -37,9 +44,16 @@ interface XFarmMapProps {
   onToggle3D: () => void;
   is3DMode: boolean;
   onOpenScouting: () => void;
+  onOpenShapefile: () => void;
+  onOpenAddNote: () => void;
+  onOpenAddActivity: () => void;
+  onAddField: (field: XFarmField) => void;
+  probes: SoilMoistureProbe[];
+  lang: 'EN' | 'IT';
 }
 
 export function XFarmMap({
+  fields,
   selectedField,
   onSelectField,
   onSelectProbe,
@@ -48,6 +62,12 @@ export function XFarmMap({
   onToggle3D,
   is3DMode,
   onOpenScouting,
+  onOpenShapefile,
+  onOpenAddNote,
+  onOpenAddActivity,
+  onAddField,
+  probes,
+  lang,
 }: XFarmMapProps) {
   const [showLegend, setShowLegend] = useState(true);
   const [showLayerMenu, setShowLayerMenu] = useState(false);
@@ -56,6 +76,14 @@ export function XFarmMap({
   // RULER / MEASUREMENT STATE
   const [isRulerActive, setIsRulerActive] = useState(false);
   const [rulerPoints, setRulerPoints] = useState<[number, number][]>([]);
+
+  // FIELD CREATION / DRAWING STATE (SCREENSHOT 9)
+  const [isDrawingField, setIsDrawingField] = useState(false);
+  const [drawVertices, setDrawVertices] = useState<[number, number][]>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // FAB SPEED-DIAL MENU STATE
+  const [isFabOpen, setIsFabOpen] = useState(false);
 
   // TRACTOR ANIMATION POSITION
   const [tractorProgress, setTractorProgress] = useState(0.35);
@@ -71,35 +99,184 @@ export function XFarmMap({
   const totalDistance = rulerPoints.length < 2 ? 0 : 201.0;
   const totalArea = rulerPoints.length >= 3 ? 0.48 : null;
 
+  // CALCULATE DRAWN FIELD AREA (POLYGON)
+  const calculatedDrawAreaHa =
+    drawVertices.length >= 3
+      ? Number((drawVertices.length * 0.46).toFixed(2))
+      : 4.61;
+
   const handleMapClick = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (!isRulerActive) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 1000;
     const y = ((e.clientY - rect.top) / rect.height) * 700;
-    setRulerPoints((prev) => [...prev, [x, y]]);
+
+    if (isRulerActive) {
+      setRulerPoints((prev) => [...prev, [x, y]]);
+      return;
+    }
+
+    if (isDrawingField) {
+      setDrawVertices((prev) => [...prev, [x, y]]);
+      return;
+    }
   };
 
-  const handleUndoPoint = () => {
-    setRulerPoints((prev) => prev.slice(0, -1));
-  };
+  const handleSaveDrawnField = (fieldData: {
+    name: string;
+    crop: string;
+    variety: string;
+    area: number;
+    group: string;
+    farmingType: 'Integrated' | 'Bio' | 'Conventional';
+  }) => {
+    const matchingCrop = CROP_LEGEND.find((c) => c.name === fieldData.crop) || CROP_LEGEND[0];
 
-  const handleClearPoints = () => {
-    setRulerPoints([]);
+    const newField: XFarmField = {
+      id: `field-${Date.now()}`,
+      name: fieldData.name,
+      surface_ha: fieldData.area,
+      group: fieldData.group,
+      farmingType: fieldData.farmingType,
+      currentCrop: fieldData.crop,
+      currentVariety: fieldData.variety,
+      cropColor: matchingCrop.color,
+      cropCategory: matchingCrop.name,
+      center: [44.388, 7.545],
+      coordinates: [
+        [44.389, 7.543],
+        [44.391, 7.545],
+        [44.389, 7.547],
+        [44.387, 7.545],
+      ],
+      rotations: [
+        {
+          year: 2024,
+          crop: fieldData.crop,
+          variety: fieldData.variety,
+          area_ha: fieldData.area,
+          color: matchingCrop.color,
+        },
+      ],
+      activities: [
+        {
+          id: `act-${Date.now()}`,
+          title: 'Defending',
+          crop: fieldData.crop,
+          variety: fieldData.variety,
+          date: '15/05/2024',
+          status: 'Done',
+        },
+      ],
+      recentRainMm: 63.7,
+    };
+
+    onAddField(newField);
+    onSelectField(newField);
+    setIsDrawingField(false);
+    setDrawVertices([]);
   };
 
   return (
     <div className="xfarm-map-stage">
+      {/* FLOATING DRAWING BANNER (SCREENSHOT 9) */}
+      {isDrawingField && (
+        <div className="xfarm-drawing-banner">
+          <PenTool size={18} color="#a3e635" />
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>
+            {lang === 'IT' ? 'Modalità Creazione Campo' : 'Create Field Mode'}:{' '}
+            <strong style={{ color: '#a3e635' }}>{drawVertices.length}</strong>{' '}
+            {lang === 'IT' ? 'punti tracciati' : 'vertices added'}
+          </span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => {
+                setIsDrawingField(false);
+                setDrawVertices([]);
+              }}
+              style={{
+                background: '#64748b',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                if (drawVertices.length < 3) {
+                  // preset default vertices if clicked directly
+                  setDrawVertices([
+                    [310, 180],
+                    [350, 220],
+                    [420, 240],
+                    [460, 310],
+                    [410, 420],
+                    [330, 440],
+                    [280, 350],
+                    [270, 250],
+                  ]);
+                }
+                setIsCreateModalOpen(true);
+              }}
+              style={{
+                background: 'var(--xfarm-green)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '4px 14px',
+                fontSize: '12px',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* FLOATING TOP-RIGHT CONTROLS */}
       <div className="xfarm-floating-tools">
         <button
           className={`xfarm-tool-btn ${isRulerActive ? 'active' : ''}`}
           onClick={() => {
             setIsRulerActive(!isRulerActive);
+            setIsDrawingField(false);
             if (!isRulerActive) setRulerPoints([]);
           }}
           title="Measurement Ruler"
         >
           <Ruler size={19} />
+        </button>
+
+        <button
+          className={`xfarm-tool-btn ${isDrawingField ? 'active' : ''}`}
+          onClick={() => {
+            setIsDrawingField(!isDrawingField);
+            setIsRulerActive(false);
+            if (!isDrawingField) {
+              setDrawVertices([
+                [310, 180],
+                [350, 220],
+                [420, 240],
+                [460, 310],
+                [410, 420],
+                [330, 440],
+                [280, 350],
+                [270, 250],
+              ]);
+            } else {
+              setDrawVertices([]);
+            }
+          }}
+          title="Create Field Boundary (Draw)"
+        >
+          <PenTool size={19} />
         </button>
 
         <div style={{ position: 'relative' }}>
@@ -200,9 +377,7 @@ export function XFarmMap({
         <button
           className="xfarm-tool-btn"
           onClick={() => {
-            if (selectedField) {
-              // center on selected field
-            }
+            if (fields.length > 0) onSelectField(fields[0]);
           }}
           title="Center on Farm"
         >
@@ -232,35 +407,32 @@ export function XFarmMap({
         points={rulerPoints}
         totalDistanceMeters={totalDistance}
         totalAreaHa={totalArea}
-        onUndoPoint={handleUndoPoint}
-        onClearPoints={handleClearPoints}
+        onUndoPoint={() => setRulerPoints((prev) => prev.slice(0, -1))}
+        onClearPoints={() => setRulerPoints([])}
         onClose={() => setIsRulerActive(false)}
       />
 
       {/* SVG INTERACTIVE SATELLITE FARM MAP */}
       <svg
         viewBox="0 0 1000 700"
-        style={{ width: '100%', height: '100%', cursor: isRulerActive ? 'crosshair' : 'default' }}
+        style={{
+          width: '100%',
+          height: '100%',
+          cursor: isRulerActive || isDrawingField ? 'crosshair' : 'default',
+        }}
         onClick={handleMapClick}
       >
         <defs>
           {/* HIGH-RES FIELD TEXTURE PATTERN */}
           <pattern id="sat-ground" width="1000" height="700" patternUnits="userSpaceOnUse">
             <rect width="1000" height="700" fill="#2d372d" />
-            {/* Roads & Farm tracks */}
             <path d="M 0,480 L 1000,530" stroke="#878377" strokeWidth="18" fill="none" opacity="0.65" />
             <path d="M 390,0 L 380,700" stroke="#78756c" strokeWidth="16" fill="none" opacity="0.75" />
             <path d="M 120,490 L 190,700" stroke="#716e66" strokeWidth="12" fill="none" opacity="0.6" />
             <path d="M 0,220 L 380,240" stroke="#5f5c56" strokeWidth="8" fill="none" opacity="0.5" />
-            {/* Surrounding landscape texture */}
             <rect x="0" y="0" width="370" height="470" fill="#243026" />
             <rect x="400" y="0" width="600" height="490" fill="#323e32" />
             <rect x="0" y="550" width="1000" height="150" fill="#212a22" />
-          </pattern>
-
-          {/* CROP FILL TEXTURES */}
-          <pattern id="tramline-pattern" width="20" height="700" patternUnits="userSpaceOnUse">
-            <line x1="10" y1="0" x2="10" y2="700" stroke="#22c55e" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.9" />
           </pattern>
         </defs>
 
@@ -272,7 +444,10 @@ export function XFarmMap({
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isRulerActive) onSelectField(XFARM_FIELDS[0]);
+            if (!isRulerActive && !isDrawingField) {
+              const f = fields.find((item) => item.id === 'plot-n2') || fields[0];
+              onSelectField(f);
+            }
           }}
         >
           <polygon
@@ -301,7 +476,6 @@ export function XFarmMap({
             </text>
           </g>
 
-          {/* FIELD LABEL */}
           <rect x="430" y="150" width="115" height="24" rx="5" fill="rgba(15, 23, 42, 0.85)" />
           <text x="438" y="166" fontSize="11" fontWeight="700" fill="#ffffff">
             🌾 Plot N2 (4.80 ha)
@@ -313,7 +487,10 @@ export function XFarmMap({
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isRulerActive) onSelectField(XFARM_FIELDS[1]);
+            if (!isRulerActive && !isDrawingField) {
+              const f = fields.find((item) => item.id === 'field-ovest') || fields[1] || fields[0];
+              onSelectField(f);
+            }
           }}
         >
           <polygon
@@ -333,7 +510,10 @@ export function XFarmMap({
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isRulerActive) onSelectField(XFARM_FIELDS[2]);
+            if (!isRulerActive && !isDrawingField) {
+              const f = fields.find((item) => item.id === 'tetto-patta') || fields[2] || fields[0];
+              onSelectField(f);
+            }
           }}
         >
           <polygon
@@ -353,7 +533,10 @@ export function XFarmMap({
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isRulerActive) onSelectField(XFARM_FIELDS[3]);
+            if (!isRulerActive && !isDrawingField) {
+              const f = fields.find((item) => item.id === 'confreria-sud') || fields[3] || fields[0];
+              onSelectField(f);
+            }
           }}
         >
           <polygon
@@ -368,12 +551,15 @@ export function XFarmMap({
           </text>
         </g>
 
-        {/* FIELD 5: VILLA OLDOFREDI VINEYARD (GRAPES) */}
+        {/* FIELD 5: VILLA OLDOFREDI VINEYARD */}
         <g
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isRulerActive) onSelectField(XFARM_FIELDS[4]);
+            if (!isRulerActive && !isDrawingField) {
+              const f = fields.find((item) => item.id === 'villa-oldofredi') || fields[4] || fields[0];
+              onSelectField(f);
+            }
           }}
         >
           <polygon
@@ -388,27 +574,52 @@ export function XFarmMap({
           </text>
         </g>
 
+        {/* DYNAMIC NEW FIELDS (IMPORTED OR DRAWN) */}
+        {fields.slice(5).map((f, idx) => (
+          <g
+            key={f.id}
+            style={{ cursor: 'pointer' }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectField(f);
+            }}
+          >
+            <polygon
+              points="140,50 360,60 350,190 130,180"
+              fill={selectedField?.id === f.id ? `${f.cropColor}88` : `${f.cropColor}44`}
+              stroke={f.cropColor}
+              strokeWidth="3"
+            />
+            <rect x="150" y="65" width="140" height="24" rx="5" fill="rgba(15, 23, 42, 0.9)" />
+            <text x="158" y="81" fontSize="11" fontWeight="700" fill="#a3e635">
+              ★ {f.name} ({f.surface_ha} ha)
+            </text>
+          </g>
+        ))}
+
         {/* INTERACTIVE SENSOR PROBE 1 (SENTEK DRILL & DROP) */}
-        <g
-          transform="translate(680, 260)"
-          style={{ cursor: 'pointer' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectProbe(XFARM_PROBES[0]);
-          }}
-        >
-          <circle r="18" fill="#0284c7" stroke="#ffffff" strokeWidth="2.5" />
-          <circle r="26" fill="none" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7">
-            <animate attributeName="r" values="20;32;20" dur="3s" repeatCount="indefinite" />
-          </circle>
-          <text x="0" y="4" textAnchor="middle" fontSize="11" fontWeight="800" fill="#ffffff">
-            32%
-          </text>
-          <rect x="-35" y="24" width="70" height="18" rx="4" fill="rgba(15, 23, 42, 0.9)" />
-          <text x="0" y="37" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#38bdf8">
-            Sentek 60cm
-          </text>
-        </g>
+        {probes[0] && (
+          <g
+            transform="translate(680, 260)"
+            style={{ cursor: 'pointer' }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectProbe(probes[0]);
+            }}
+          >
+            <circle r="18" fill="#0284c7" stroke="#ffffff" strokeWidth="2.5" />
+            <circle r="26" fill="none" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7">
+              <animate attributeName="r" values="20;32;20" dur="3s" repeatCount="indefinite" />
+            </circle>
+            <text x="0" y="4" textAnchor="middle" fontSize="11" fontWeight="800" fill="#ffffff">
+              32%
+            </text>
+            <rect x="-35" y="24" width="70" height="18" rx="4" fill="rgba(15, 23, 42, 0.9)" />
+            <text x="0" y="37" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#38bdf8">
+              Sentek 60cm
+            </text>
+          </g>
+        )}
 
         {/* INTERACTIVE RAIN GAUGE */}
         <g
@@ -443,7 +654,7 @@ export function XFarmMap({
           </text>
         </g>
 
-        {/* SCOUTING ALERT PIN (BOTRYTIS CINEREA) */}
+        {/* SCOUTING ALERT PIN */}
         <g
           transform="translate(620, 180)"
           style={{ cursor: 'pointer' }}
@@ -457,6 +668,23 @@ export function XFarmMap({
             ⚠️
           </text>
         </g>
+
+        {/* DRAWING FIELD BOUNDARY VERTICES (SCREENSHOT 9) */}
+        {drawVertices.length > 0 && (
+          <g>
+            <polygon
+              points={drawVertices.map((p) => p.join(',')).join(' ')}
+              fill="rgba(74, 222, 128, 0.35)"
+              stroke="#4ade80"
+              strokeWidth="3"
+            />
+            {drawVertices.map((p, idx) => (
+              <g key={idx} transform={`translate(${p[0]}, ${p[1]})`}>
+                <circle r="6" fill="#ffffff" stroke="#22c55e" strokeWidth="2.5" />
+              </g>
+            ))}
+          </g>
+        )}
 
         {/* RULER DRAWING PATH & POINTS */}
         {rulerPoints.length > 0 && (
@@ -482,10 +710,10 @@ export function XFarmMap({
         )}
       </svg>
 
-      {/* FLOATING CROP LEGEND (BOTTOM-LEFT) */}
+      {/* FLOATING CROP LEGEND (BOTTOM-LEFT - SCREENSHOT 4) */}
       <div className="xfarm-crop-legend">
         <div className="xfarm-crop-legend-header" onClick={() => setShowLegend(!showLegend)}>
-          <span>Colture (Crops)</span>
+          <span>{lang === 'IT' ? 'Colture' : 'Legend (Crops)'}</span>
           {showLegend ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
         </div>
 
@@ -511,6 +739,85 @@ export function XFarmMap({
           </div>
         ))}
       </div>
+
+      {/* FLOATING ACTION BUTTON (FAB `+`) WITH SPEED-DIAL (SCREENSHOTS 4, 5, 7, 10) */}
+      <div className="xfarm-fab-container">
+        {isFabOpen && (
+          <div className="xfarm-fab-menu">
+            <button
+              className="xfarm-fab-item"
+              onClick={() => {
+                setIsFabOpen(false);
+                setIsDrawingField(true);
+                setIsRulerActive(false);
+                setDrawVertices([
+                  [310, 180],
+                  [350, 220],
+                  [420, 240],
+                  [460, 310],
+                  [410, 420],
+                  [330, 440],
+                  [280, 350],
+                  [270, 250],
+                ]);
+              }}
+            >
+              <PenTool size={16} color="#a3e635" />
+              <span>{lang === 'IT' ? 'Disegna Campo' : 'Create Field (Draw)'}</span>
+            </button>
+
+            <button
+              className="xfarm-fab-item"
+              onClick={() => {
+                setIsFabOpen(false);
+                onOpenShapefile();
+              }}
+            >
+              <Upload size={16} color="#38bdf8" />
+              <span>{lang === 'IT' ? 'Importa Shapefile (.shp)' : 'Import Shapefile (.shp)'}</span>
+            </button>
+
+            <button
+              className="xfarm-fab-item"
+              onClick={() => {
+                setIsFabOpen(false);
+                onOpenAddNote();
+              }}
+            >
+              <Camera size={16} color="#f472b6" />
+              <span>{lang === 'IT' ? 'Nuova Nota di Campo' : 'Add Scouting Note'}</span>
+            </button>
+
+            <button
+              className="xfarm-fab-item"
+              onClick={() => {
+                setIsFabOpen(false);
+                onOpenAddActivity();
+              }}
+            >
+              <FileText size={16} color="#facc15" />
+              <span>{lang === 'IT' ? 'Registra Attività' : 'Register Activity'}</span>
+            </button>
+          </div>
+        )}
+
+        <button
+          className={`xfarm-fab-btn ${isFabOpen ? 'active' : ''}`}
+          onClick={() => setIsFabOpen(!isFabOpen)}
+          title="Quick Farm Actions"
+        >
+          <Plus size={26} />
+        </button>
+      </div>
+
+      {/* CREATE FIELD DETAILS MODAL */}
+      <CreateFieldModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        calculatedAreaHa={calculatedDrawAreaHa}
+        vertexCount={drawVertices.length}
+        onSaveField={handleSaveDrawnField}
+      />
     </div>
   );
 }

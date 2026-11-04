@@ -11,7 +11,12 @@ import {
   AlertTriangle,
   X,
   Droplets,
+  Monitor,
+  Tablet,
+  Smartphone,
 } from 'lucide-react';
+
+export type ViewportMode = 'desktop' | 'tablet' | 'mobile';
 
 interface XFarmHeaderProps {
   onSearch: (query: string) => void;
@@ -19,6 +24,10 @@ interface XFarmHeaderProps {
   onSelectPilot: (pilot: string) => void;
   onOpenNotifications: () => void;
   isNotificationsOpen: boolean;
+  lang: 'EN' | 'IT';
+  onChangeLang: (lang: 'EN' | 'IT') => void;
+  viewportMode: ViewportMode;
+  onChangeViewport: (mode: ViewportMode) => void;
 }
 
 export function XFarmHeader({
@@ -27,9 +36,12 @@ export function XFarmHeader({
   onSelectPilot,
   onOpenNotifications,
   isNotificationsOpen,
+  lang,
+  onChangeLang,
+  viewportMode,
+  onChangeViewport,
 }: XFarmHeaderProps) {
   const [searchValue, setSearchValue] = useState('');
-  const [lang, setLang] = useState<'EN' | 'IT' | 'LK'>('EN');
   const [showOrgDropdown, setShowOrgDropdown] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -54,11 +66,90 @@ export function XFarmHeader({
           <Search size={16} />
           <input
             type="text"
-            placeholder="Search a field, parcel or location..."
+            placeholder={
+              lang === 'IT'
+                ? 'Inserisci una posizione o campo...'
+                : 'Search a field, parcel or location...'
+            }
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
           />
         </form>
+      </div>
+
+      {/* CENTER: DEVICE PREVIEW SWITCHER (DESKTOP, IPAD, IPHONE) */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          background: 'rgba(0, 0, 0, 0.22)',
+          borderRadius: '8px',
+          padding: '2px 4px',
+          gap: '2px',
+        }}
+      >
+        <button
+          onClick={() => onChangeViewport('desktop')}
+          style={{
+            background: viewportMode === 'desktop' ? 'rgba(255, 255, 255, 0.25)' : 'transparent',
+            border: 'none',
+            color: '#ffffff',
+            borderRadius: '6px',
+            padding: '4px 8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            fontSize: '11px',
+            fontWeight: 600,
+          }}
+          title="Desktop full bleed view"
+        >
+          <Monitor size={14} />
+          <span>Desktop</span>
+        </button>
+
+        <button
+          onClick={() => onChangeViewport('tablet')}
+          style={{
+            background: viewportMode === 'tablet' ? 'rgba(255, 255, 255, 0.25)' : 'transparent',
+            border: 'none',
+            color: '#ffffff',
+            borderRadius: '6px',
+            padding: '4px 8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            fontSize: '11px',
+            fontWeight: 600,
+          }}
+          title="iPad tablet mockup (as in Screenshots 3-7, 10)"
+        >
+          <Tablet size={14} />
+          <span>iPad</span>
+        </button>
+
+        <button
+          onClick={() => onChangeViewport('mobile')}
+          style={{
+            background: viewportMode === 'mobile' ? 'rgba(255, 255, 255, 0.25)' : 'transparent',
+            border: 'none',
+            color: '#ffffff',
+            borderRadius: '6px',
+            padding: '4px 8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            fontSize: '11px',
+            fontWeight: 600,
+          }}
+          title="iPhone mobile mockup (as in Screenshots 2, 8, 9)"
+        >
+          <Smartphone size={14} />
+          <span>iPhone</span>
+        </button>
       </div>
 
       {/* RIGHT: WEATHER, NOTIFICATIONS, ORG, USER */}
@@ -117,7 +208,7 @@ export function XFarmHeader({
                 borderRadius: '8px',
                 boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
                 padding: '6px',
-                minWidth: '220px',
+                minWidth: '240px',
                 zIndex: 200,
                 border: '1px solid #cbd5e1',
               }}
@@ -181,26 +272,27 @@ export function XFarmHeader({
 
         {/* LANGUAGE SWITCHER */}
         <button
-          onClick={() => setLang(lang === 'EN' ? 'IT' : lang === 'IT' ? 'LK' : 'EN')}
+          onClick={() => onChangeLang(lang === 'EN' ? 'IT' : 'EN')}
           style={{
-            background: 'transparent',
+            background: 'rgba(255, 255, 255, 0.15)',
             border: 'none',
             color: '#ffffff',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '4px',
+            gap: '5px',
             fontSize: '12px',
             fontWeight: 700,
-            padding: '4px 8px',
+            padding: '5px 10px',
+            borderRadius: '6px',
           }}
-          title="Switch Language"
+          title={lang === 'EN' ? 'Switch to Italian (Italiano)' : 'Passa all\'inglese (English)'}
         >
-          <Globe size={15} />
-          <span>{lang}</span>
+          <Globe size={14} />
+          <span>{lang === 'EN' ? '🇬🇧 EN' : '🇮🇹 IT'}</span>
         </button>
 
-        {/* USER PROFILE */}
+        {/* USER PROFILE (MARIO ROSSI) */}
         <div style={{ position: 'relative' }}>
           <div
             className="xfarm-user-profile"
