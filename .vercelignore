@@ -1,0 +1,9 @@
+backend/
+scripts/
+tests/
+.venv/
+tmp/
+output/
+artifacts/
+playwright-report/
+test-results/

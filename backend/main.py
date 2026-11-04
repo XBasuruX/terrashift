@@ -1,15 +1,35 @@
+import sys
+import os
+
+_backend_dir = os.path.dirname(os.path.abspath(__file__))
+if _backend_dir not in sys.path:
+    sys.path.insert(0, _backend_dir)
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from .contracts import AnalysisRequest, ClimateQuery
-from .providers.service import get_climate
-from .science.climate import summarize
-from .science.rotation import analyze_rotations
-from .knowledge import CROPS, SOURCES
 from starlette.concurrency import run_in_threadpool
-from .providers.modis import get_vegetation
-from .responses import ClimateResponse, AnalysisResponse
-from .land import router as land_router
-from .vector_maps import router as vector_router
+
+try:
+    from .contracts import AnalysisRequest, ClimateQuery
+    from .providers.service import get_climate
+    from .science.climate import summarize
+    from .science.rotation import analyze_rotations
+    from .knowledge import CROPS, SOURCES
+    from .providers.modis import get_vegetation
+    from .responses import ClimateResponse, AnalysisResponse
+    from .land import router as land_router
+    from .vector_maps import router as vector_router
+except (ImportError, ValueError):
+    from contracts import AnalysisRequest, ClimateQuery
+    from providers.service import get_climate
+    from science.climate import summarize
+    from science.rotation import analyze_rotations
+    from knowledge import CROPS, SOURCES
+    from providers.modis import get_vegetation
+    from responses import ClimateResponse, AnalysisResponse
+    from land import router as land_router
+    from vector_maps import router as vector_router
+
 
 app = FastAPI(
     title="TerraShift API",
