@@ -1001,3 +1001,41 @@
   border-radius: 20px;
   z-index: 1000;
 }
+
+
+/* MOBILE RESPONSIVE OVERRIDES FOR PHONE SIMULATION */
+.xfarm-mobile-frame .xfarm-sidebar {
+  display: none;
+}
+
+.xfarm-mobile-frame .xfarm-field-drawer {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 0;
+  z-index: 90;
+}
+
+.xfarm-mobile-frame .xfarm-fleet-drawer {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 0;
+  z-index: 90;
+}
+
+.xfarm-mobile-frame .xfarm-search-box {
+  width: 160px;
+}
+
+.xfarm-mobile-frame .xfarm-header-right {
+  gap: 6px;
+}
+
+.xfarm-mobile-frame .xfarm-weather-pill {
+  display: none;
+}
