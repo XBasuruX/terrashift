@@ -1,0 +1,1356 @@
+{
+  "basePath": "/rst",
+  "definitions": {
+    "ModisBand": {
+      "properties": {
+        "add_offset": {
+          "description": "Add 'add_offset' to the data values of a variable. If 'scale_factor' is also present, 'add_offset' should be added to the scaled data",
+          "type": "string"
+        },
+        "band": {
+          "description": "Short name",
+          "type": "string"
+        },
+        "description": {
+          "description": "Long name; A descriptive name that indicates a variable's content",
+          "type": "string"
+        },
+        "fill_value": {
+          "description": "Value used to represent missing or undefined data",
+          "type": "string"
+        },
+        "scale_factor": {
+          "description": "Multiply data values by the 'scale_factor'",
+          "type": "string"
+        },
+        "units": {
+          "description": "Units of measurement",
+          "type": "string"
+        },
+        "valid_range": {
+          "description": "Smallest and largest valid values of a variable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "band",
+        "description",
+        "units",
+        "valid_range",
+        "fill_value",
+        "scale_factor",
+        "add_offset"
+      ],
+      "type": "object"
+    },
+    "ModisData": {
+      "properties": {
+        "band": {
+          "description": "Band name",
+          "type": "string"
+        },
+        "cellsize": {
+          "description": "Resolution of the data",
+          "format": "float",
+          "type": "number"
+        },
+        "header": {
+          "description": "Header for the returned subset",
+          "type": "string"
+        },
+        "latitude": {
+          "description": "Latitude in degrees of the subset location",
+          "format": "float",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "Longitude in degrees of the subset location",
+          "format": "float",
+          "type": "number"
+        },
+        "ncols": {
+          "description": "Number of columns",
+          "format": "float",
+          "type": "number"
+        },
+        "nrows": {
+          "description": "Number of rows",
+          "format": "float",
+          "type": "number"
+        },
+        "scale": {
+          "description": "Data value scale",
+          "format": "float",
+          "type": "number"
+        },
+        "subset": {
+          "description": "Subset data",
+          "items": {
+            "$ref": "#/definitions/ModisSubset"
+          },
+          "type": "array"
+        },
+        "units": {
+          "description": "Band units",
+          "format": "float",
+          "type": "number"
+        },
+        "xllcorner": {
+          "description": "X-Longitude of the corner of lower left pixel in native projection",
+          "format": "float",
+          "type": "number"
+        },
+        "yllcorner": {
+          "description": "Y-Latitude of the corner of lower left pixel in native projection",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "xllcorner",
+        "yllcorner",
+        "cellsize",
+        "nrows",
+        "ncols",
+        "band",
+        "units",
+        "scale",
+        "latitude",
+        "longitude",
+        "header",
+        "subset"
+      ],
+      "type": "object"
+    },
+    "ModisDate": {
+      "properties": {
+        "calendar_date": {
+          "description": "Calendar date",
+          "format": "date",
+          "type": "string"
+        },
+        "modis_date": {
+          "description": "MODIS composite date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "modis_date",
+        "calendar_date"
+      ],
+      "type": "object"
+    },
+    "ModisProduct": {
+      "properties": {
+        "description": {
+          "description": "Long name",
+          "type": "string"
+        },
+        "frequency": {
+          "description": "Dataset update frequency",
+          "type": "string"
+        },
+        "product": {
+          "description": "Short name",
+          "type": "string"
+        },
+        "resolution_meters": {
+          "description": "Size of a single pixel in meters",
+          "format": "int32",
+          "type": "number"
+        }
+      },
+      "required": [
+        "product",
+        "description",
+        "frequency",
+        "resolution_meters"
+      ],
+      "type": "object"
+    },
+    "ModisSite": {
+      "properties": {
+        "country": {
+          "description": "Country of the site location",
+          "type": "string"
+        },
+        "latitude": {
+          "description": "Latitude in degrees of the site location",
+          "format": "float",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "Longitude in degrees of the site location",
+          "format": "float",
+          "type": "number"
+        },
+        "network": {
+          "description": "Subset network",
+          "type": "string"
+        },
+        "siteid": {
+          "description": "Unique site identifier",
+          "type": "string"
+        },
+        "sitename": {
+          "description": "Site name",
+          "type": "string"
+        },
+        "state": {
+          "description": "State of the site location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteid",
+        "sitename",
+        "network",
+        "latitude",
+        "longitude",
+        "state",
+        "country"
+      ],
+      "type": "object"
+    },
+    "ModisSubset": {
+      "properties": {
+        "band": {
+          "description": "Band name",
+          "type": "string"
+        },
+        "calendar_date": {
+          "description": "Calendar date",
+          "format": "date",
+          "type": "string"
+        },
+        "data": {
+          "description": "Data values",
+          "items": {
+            "format": "float",
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "filename": {
+          "description": "Filename",
+          "type": "string"
+        },
+        "modis_date": {
+          "description": "MODIS composite date",
+          "type": "string"
+        },
+        "proc_date": {
+          "description": "Data processing date",
+          "type": "string"
+        },
+        "tile": {
+          "description": "Subset tile index",
+          "type": "string"
+        }
+      },
+      "required": [
+        "modis_date",
+        "calendar_date",
+        "band",
+        "tile",
+        "proc_date",
+        "data"
+      ],
+      "type": "object"
+    },
+    "ModisSubsetStatistics": {
+      "properties": {
+        "band": {
+          "description": "Band name",
+          "type": "string"
+        },
+        "calendar_date": {
+          "description": "Calendar date",
+          "format": "date",
+          "type": "string"
+        },
+        "modis_date": {
+          "description": "MODIS composite date",
+          "type": "string"
+        },
+        "pixels_pass": {
+          "description": "Number of unfiltered pixels in the subset",
+          "format": "int32",
+          "type": "number"
+        },
+        "pixels_pass_rel": {
+          "description": "Percentage of unfiltered pixels in the subset",
+          "format": "float",
+          "type": "number"
+        },
+        "pixels_total": {
+          "description": "Number of pixels in the subset",
+          "format": "int32",
+          "type": "number"
+        },
+        "proc_date": {
+          "description": "Data processing date",
+          "type": "string"
+        },
+        "value_center": {
+          "description": "Data value at the center of the subset",
+          "format": "float",
+          "type": "number"
+        },
+        "value_max": {
+          "description": "Maximum subset data value",
+          "format": "float",
+          "type": "number"
+        },
+        "value_mean": {
+          "description": "Mean of subset data values",
+          "format": "float",
+          "type": "number"
+        },
+        "value_min": {
+          "description": "Minimum subset data value",
+          "format": "float",
+          "type": "number"
+        },
+        "value_range": {
+          "description": "Range of subset data values",
+          "format": "float",
+          "type": "number"
+        },
+        "value_stddev": {
+          "description": "Standard deviation of subset data values",
+          "format": "float",
+          "type": "number"
+        },
+        "value_sum": {
+          "description": "Sum of subset data values",
+          "format": "float",
+          "type": "number"
+        },
+        "value_variance": {
+          "description": "Variance of subset data values",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "modis_date",
+        "calendar_date",
+        "band",
+        "value_center",
+        "value_min",
+        "value_max",
+        "value_sum",
+        "value_range",
+        "value_mean",
+        "value_variance",
+        "value_stddev",
+        "pixels_total",
+        "pixels_pass",
+        "pixels_pass_rel",
+        "proc_date"
+      ],
+      "type": "object"
+    },
+    "NetworkSite": {
+      "properties": {
+        "latitude": {
+          "description": "Latitude in degrees of the site location",
+          "format": "float",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "Longitude in degrees of the site location",
+          "format": "float",
+          "type": "number"
+        },
+        "network": {
+          "description": "Subset network",
+          "type": "string"
+        },
+        "network_siteid": {
+          "description": "Unique network site identifier",
+          "type": "string"
+        },
+        "network_sitename": {
+          "description": "Network site name",
+          "type": "string"
+        },
+        "network_siteurl": {
+          "description": "Network site link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "network_siteid",
+        "network_sitename",
+        "network_siteurl",
+        "network",
+        "latitude",
+        "longitude"
+      ],
+      "type": "object"
+    }
+  },
+  "externalDocs": {
+    "description": "TESViS Subsets home",
+    "url": "https://modis.ornl.gov/"
+  },
+  "host": "modis.ornl.gov",
+  "info": {
+    "description": "The Web service provides users with subsets of terrestrial ecology data products through standards based [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) (REpresentational State Transfer) Web service. Through the Web service users can access functions to execute on their machine. A list of functions available to users are provided in the table below. The web service is built on ORNL DAAC's [Terrestrial Ecology Subsetting & Visualization Services (TESViS)](https://daac.ornl.gov/globalsubset/) that provides customized subsets and visualization of terrestrial ecology data products for any land location on the globe.\n\n  Using the Web Service users can\n\n  * Retrieve subsets through command line operation\n  * Get subsets directly into software such as R, Python and integrate the subsets into client side workflow\n  * Write custom code to use the subsets for visualization or data reformatting\n  .. and much more\n",
+    "title": "TESViS Web Service",
+    "version": "1.7.0"
+  },
+  "paths": {
+    "/api/v1/networks": {
+      "get": {
+        "operationId": "get_networks",
+        "parameters": [],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Get available networks.",
+        "tags": [
+          "networks"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.networks_controller"
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "description": "Product short name is used.",
+        "operationId": "get_products",
+        "parameters": [
+          {
+            "description": "Only display products from the specified sensor.<br>Available sensors: MODIS-Terra, MODIS-Aqua, MODIS-TerraAqua, VIIRS-SNPP, Daymet, SMAP, ECOSTRESS, SIFESDR.<br>Default: all sensors",
+            "in": "query",
+            "name": "sensor",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Only display products available for the specified tool.<br>Available tools: FixedSite, GlobalSubset.<br>Default: all tools",
+            "in": "query",
+            "name": "tool",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ModisProduct"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "summary": "Get available products.",
+        "tags": [
+          "products"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.products_controller"
+      }
+    },
+    "/api/v1/sites": {
+      "get": {
+        "operationId": "get_sites",
+        "parameters": [],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ModisSite"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "summary": "Get available fixed sites.",
+        "tags": [
+          "sites"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.sites_controller"
+      }
+    },
+    "/api/v1/{network}/sites": {
+      "get": {
+        "operationId": "get_network_sites",
+        "parameters": [
+          {
+            "description": "Name of the network to query.",
+            "in": "path",
+            "name": "network",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/NetworkSite"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "summary": "Get available fixed sites in the network.",
+        "tags": [
+          "sites"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.sites_controller"
+      }
+    },
+    "/api/v1/{product}/bands": {
+      "get": {
+        "operationId": "get_bands",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ModisBand"
+              },
+              "type": "array"
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get available bands for a product.",
+        "tags": [
+          "bands"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.bands_controller"
+      }
+    },
+    "/api/v1/{product}/dates": {
+      "get": {
+        "operationId": "get_dates",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Latitude in geographic Lat/Long WGS 84 coordinate system.",
+            "format": "float",
+            "in": "query",
+            "name": "latitude",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "description": "Longitude in geographic Lat/Long WGS 84 coordinate system.",
+            "format": "float",
+            "in": "query",
+            "name": "longitude",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ModisDate"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "No {product} data available for {latitude} {longitude} location."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get available dates for a product.",
+        "tags": [
+          "dates"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.dates_controller"
+      }
+    },
+    "/api/v1/{product}/subset": {
+      "get": {
+        "operationId": "get_subset",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Latitude in geographic Lat/Long WGS 84 coordinate system.",
+            "format": "float",
+            "in": "query",
+            "name": "latitude",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "description": "Longitude in geographic Lat/Long WGS 84 coordinate system.",
+            "format": "float",
+            "in": "query",
+            "name": "longitude",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "description": "Band to retrieve. Dafault: all bands",
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Size in km of the subset above and below the center location.",
+            "format": "int32",
+            "in": "query",
+            "name": "kmAboveBelow",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Size in km of the subset left and right of the center location.",
+            "format": "int32",
+            "in": "query",
+            "name": "kmLeftRight",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/ModisData"
+            }
+          },
+          "400": {
+            "description": "Invalid band {band} for product {product}."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get subset and detailed projection information for the location, product and date combination.",
+        "tags": [
+          "subset"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_controller"
+      }
+    },
+    "/api/v1/{product}/subsetOrder": {
+      "get": {
+        "description": "On success, this returns an order ID and an email with a link to the subset order will be dispatched to the provided email address.",
+        "operationId": "get_subset_order",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Latitude in geographic Lat/Long WGS 84 coordinate system.",
+            "format": "float",
+            "in": "query",
+            "name": "latitude",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "description": "Longitude in geographic Lat/Long WGS 84 coordinate system.",
+            "format": "float",
+            "in": "query",
+            "name": "longitude",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "description": "Email address to which this order will be sent.",
+            "format": "email",
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Unique tag for the order.",
+            "in": "query",
+            "maxLength": 8,
+            "name": "uid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Size in km of the subset above and below the center location.",
+            "format": "int32",
+            "in": "query",
+            "name": "kmAboveBelow",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Size in km of the subset left and right of the center location.",
+            "format": "int32",
+            "in": "query",
+            "name": "kmLeftRight",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Projection type of the generated GeoTIFF coordinates.<br>Available projections: <br>&emsp;SIN ... MODIS Sinusoidal Projection<br>&emsp;GEOG ... Geographic Lat/long.<br>Default: SIN",
+            "in": "query",
+            "name": "projection",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "No data available for time period {startDate} to {endDate} for {product} {latitude} {longitude} combination"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Order subset and detailed projection information for the location, product and date combination.",
+        "tags": [
+          "subsetOrder"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_order_controller"
+      }
+    },
+    "/api/v1/{product}/{network}/{network_siteid}/dates": {
+      "get": {
+        "operationId": "get_network_site_dates",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Name of the network to query.",
+            "in": "path",
+            "name": "network",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Network assigned identifier of the fixed field site.",
+            "in": "path",
+            "name": "network_siteid",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ModisDate"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "No {product} data available for {network} {network_siteid} location."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get available dates for a product.",
+        "tags": [
+          "dates"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.dates_controller"
+      }
+    },
+    "/api/v1/{product}/{network}/{network_siteid}/subset": {
+      "get": {
+        "operationId": "get_network_site_subset",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Name of the network to query.",
+            "in": "path",
+            "name": "network",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Network assigned identifier of the fixed field site.",
+            "in": "path",
+            "name": "network_siteid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Band to retrieve. Dafault: all bands",
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/ModisData"
+            }
+          },
+          "400": {
+            "description": "Invalid band {band} for product {product}."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get subset and detailed projection information for the site, product and date combination.",
+        "tags": [
+          "subset"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_controller"
+      }
+    },
+    "/api/v1/{product}/{network}/{network_siteid}/subsetFiltered": {
+      "get": {
+        "operationId": "get_network_site_subset_filtered",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Name of the network to query.",
+            "in": "path",
+            "name": "network",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Network assigned identifier of the fixed field site.",
+            "in": "path",
+            "name": "network_siteid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Band to retrieve. Dafault: all bands",
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/ModisData"
+            }
+          },
+          "400": {
+            "description": "Invalid band {band} for product {product}."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get quality filtered subset and detailed projection information for the site, product and date combination.",
+        "tags": [
+          "subsetFiltered"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_filtered_controller"
+      }
+    },
+    "/api/v1/{product}/{network}/{network_siteid}/subsetStatistics": {
+      "get": {
+        "operationId": "get_network_site_subset_statistics",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Name of the network to query.",
+            "in": "path",
+            "name": "network",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Network assigned identifier of the fixed field site.",
+            "in": "path",
+            "name": "network_siteid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Band to retrieve. Dafault: all bands",
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "description": "Subset statistics",
+              "items": {
+                "$ref": "#/definitions/ModisSubsetStatistics"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Invalid band {band} for product {product}."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get statistics of the subset for the site, product and date combination.",
+        "tags": [
+          "subsetStatistics"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_statistics_controller"
+      }
+    },
+    "/api/v1/{product}/{siteid}/dates": {
+      "get": {
+        "operationId": "get_site_dates",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Identifier of the fixed field site.",
+            "in": "path",
+            "name": "siteid",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ModisDate"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "No {product} data available for {siteid} location."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get available dates for a product.",
+        "tags": [
+          "dates"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.dates_controller"
+      }
+    },
+    "/api/v1/{product}/{siteid}/subset": {
+      "get": {
+        "operationId": "get_site_subset",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Identifier of the fixed field site.",
+            "in": "path",
+            "name": "siteid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Band to retrieve. Dafault: all bands",
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/ModisData"
+            }
+          },
+          "400": {
+            "description": "Invalid band {band} for product {product}."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get subset and detailed projection information for the site, product and date combination.",
+        "tags": [
+          "subset"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_controller"
+      }
+    },
+    "/api/v1/{product}/{siteid}/subsetFiltered": {
+      "get": {
+        "operationId": "get_site_subset_filtered",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Identifier of the fixed field site.",
+            "in": "path",
+            "name": "siteid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Band to retrieve. Dafault: all bands",
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/ModisData"
+            }
+          },
+          "400": {
+            "description": "Invalid band {band} for product {product}."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get quality filtered subset and detailed projection information for the site, product and date combination.",
+        "tags": [
+          "subsetFiltered"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_filtered_controller"
+      }
+    },
+    "/api/v1/{product}/{siteid}/subsetStatistics": {
+      "get": {
+        "operationId": "get_site_subset_statistics",
+        "parameters": [
+          {
+            "description": "Short name of the product to query.",
+            "in": "path",
+            "name": "product",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Identifier of the fixed field site.",
+            "in": "path",
+            "name": "siteid",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Band to retrieve. Dafault: all bands",
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Composite start date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Composite end date (AYYYYDDD) of the subset period.",
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "description": "Subset statistics",
+              "items": {
+                "$ref": "#/definitions/ModisSubsetStatistics"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Invalid band {band} for product {product}."
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get statistics of the subset for the site, product and date combination.",
+        "tags": [
+          "subsetStatistics"
+        ],
+        "x-swagger-router-controller": "frontend.rest_frontend.controllers.subset_statistics_controller"
+      }
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "tags": [
+    {
+      "description": "The list of available products.",
+      "externalDocs": {
+        "description": "The Land Processes DAAC provides information on all MODIS Land products.",
+        "url": "https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table"
+      },
+      "name": "products"
+    }
+  ]
+}

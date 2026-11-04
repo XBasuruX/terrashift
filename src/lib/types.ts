@@ -1,0 +1,156 @@
+export type View =
+  'overview' | 'explorer' | 'farm' | 'rotations' | 'climate' | 'evidence' | 'brief';
+export type Mode = 'live' | 'cached' | 'simulation';
+export type Priorities = { water: number; diversity: number; suitability: number };
+export type Farm = {
+  id?: string;
+  category?: string;
+  boundary?: number[][];
+  name: string;
+  latitude: number;
+  longitude: number;
+  area_ha: number;
+  soil: 'sandy' | 'loam' | 'clay';
+  available_water_mm: number;
+  irrigation_mm: number;
+  season_start_month: number;
+  season_length_days: number;
+  previous_crop: string;
+  existing: string[];
+  allowed_crops: string[];
+  equipment: 'standard' | 'paddy';
+  market_note: string;
+  priorities: Priorities;
+};
+export type Scenario = {
+  kind: 'typical' | 'dry' | 'wet' | 'custom';
+  temperature_delta: number;
+  rainfall_factor: number;
+};
+export type ClimateQuery = {
+  latitude: number;
+  longitude: number;
+  start: string;
+  end: string;
+  mode: Mode;
+};
+export type Provenance = {
+  mode: Mode;
+  requested_mode: Mode;
+  source: string;
+  classification: string;
+  resolution: string;
+  start: string;
+  end: string;
+  latitude: number;
+  longitude: number;
+  time_standard: string;
+  request_url: string;
+  retrieved_at: string | null;
+  sha256: string;
+  warning: string | null;
+  missing_values: number;
+};
+export type Monthly = {
+  month: string;
+  temperature: number | null;
+  precipitation: number | null;
+  eto: number | null;
+  coverage: number;
+  valid_days: number;
+  expected_days: number;
+};
+export type Climate = {
+  monthly: Monthly[];
+  daily: {
+    date: string;
+    temperature: number | null;
+    minimum: number | null;
+    maximum: number | null;
+    precipitation: number | null;
+    solar: number | null;
+  }[];
+  summary: {
+    temperature: number | null;
+    precipitation: number | null;
+    heat_days: number;
+    frost_days: number;
+    longest_dry_spell: number;
+    coverage: number;
+  };
+  anomalies: { month: string; departure: number | null }[];
+  anomaly_note: string;
+  provenance: Provenance;
+};
+export type Crop = {
+  name: string;
+  family: string;
+  legume: boolean;
+  root_m: number;
+  kc: number;
+  min_temp: number;
+  max_temp: number;
+  days: number;
+  paddy: boolean;
+  color: string;
+};
+export type Source = {
+  id: string;
+  name: string;
+  status: string;
+  resolution: string;
+  temporal: string;
+  units: string;
+  url: string;
+  note: string;
+};
+export type Catalog = { crops: Record<string, Crop>; sources: Source[] };
+export type Season = {
+  crop: string;
+  slot: number;
+  start_month: number;
+  days: number;
+  demand_mm: number;
+  rainfall_mm: number;
+  deficit_mm: number;
+  overflow_mm: number;
+  heat_days: number;
+  frost_days: number;
+  suitability: number;
+  feasible: boolean;
+  warnings: string[];
+  trace: { day: number; storage_mm: number; deficit_mm: number }[];
+};
+export type Rotation = {
+  id: string;
+  name: string;
+  sequence: string[];
+  score: number;
+  metrics: Priorities;
+  contributions: Priorities;
+  feasible: boolean;
+  pareto: boolean;
+  water_demand_mm: number;
+  water_deficit_mm: number;
+  irrigation_volume_m3: number;
+  legume_seasons: number;
+  family_breaks: number;
+  seasons: Season[];
+  warnings: string[];
+  stress: { scenario: string; score: number; deficit_mm: number }[];
+  robust_score: number;
+  sensitivity: { delta: number; score: number }[];
+};
+export type Analysis = {
+  rotations: Rotation[];
+  weights: Priorities;
+  candidate_count: number;
+  frontier: ({ sequence: string[]; score: number } & Priorities)[];
+  frontier_total: number;
+  replay_year: number | null;
+  scenario: Scenario;
+  model: string;
+  assumptions: string[];
+  provenance: Provenance;
+  farm: Farm;
+};

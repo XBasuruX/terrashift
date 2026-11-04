@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+<meta charset="UTF-8">
+<meta name="keywords" content="Data Active Archive Center, ORNL DAAC, DAAC Centers, MODIS, VIIRS, Daymet, Subsets, Land Val, ASCII, NASA, National Aeronautics and Space Administration, ORNL, https://daac.ornl.gov" />
+<meta name="description" content="ORNL DAAC MODIS" />
+<meta name="author" content="DAAC.ORNL.GOV" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TESViS Get Data</title>
+
+<link rel="stylesheet" href="/graphics/icons/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/graphics/icons/font-awesome-4.7.0/css/font-awesome.min.css">    
+<link rel="stylesheet" href="/css/style.1.6.min.css">
+<link rel="stylesheet" type="text/css" href="//daac.ornl.gov/css/index.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+<link rel="icon" type="image/png" href="/rst/static/img/favicon-32x32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="/rst/static/img/favicon-16x16.png" sizes="16x16" />
+<style>
+  /* Disable style.min.css fonts inside .swagger-ui-wrap */
+  .swagger-ui-wrap * {
+    overflow: initial;
+    float: initial;
+    text-align: initial;
+    width: initial;
+    height: initial;
+    -webkit-box-shadow: initial;
+    box-shadow: initial;
+    background: initial;
+    border: 0;
+    font-weight: inherit;
+  }
+  .swagger-ui-wrap tr:nth-child(even), .swagger-ui-wrap tr:nth-child(odd) {
+    background: initial;
+  }
+  .swagger-ui-wrap .block {
+    max-width: initial;
+    padding: initial;
+  }
+  .swagger-ui-wrap input {
+    background-color: white;
+    border-color: buttonface;
+    border-style: outset;
+    border-width: 2px;
+    padding: 1px;
+    color: unset;
+  }
+  .swagger-ui-wrap select {
+    background-color: white;
+    border-color: initial;
+    border-style: solid;
+    border-width: 1px;
+    padding: 1px;
+    color: initial;
+  }
+  .swagger-ui-wrap input.submit {
+    background-color: buttonface;
+  }
+  .swagger-ui-wrap {
+    font-size: initial;
+  }
+
+  /* Fix padding */
+  .textarea {
+    padding-bottom: 0px;
+  }
+  .swagger-section {
+    padding-bottom: 1em;
+  }
+
+  /* Hide swagger UI header, since we already display it in the MODIS page title */
+  .info_title {
+    display: none;
+  }
+</style>
+<!--<link rel="stylesheet" type="text/css" href="/rst/static/css/swagger-ui.css" >-->
+</head>
+
+<body>
+ <div class="pagebox">
+
+  <a id="skip-nav" href="#main-content">Skip to main content</a>
+
+<!-- begin evheader -->
+<header class="headerbox">
+  <div class="headerpicbox">
+    
+    <a id="daac-link" href="//daac.ornl.gov"  title="ORNL DAAC" target="_blank">ORNL DAAC Home</a>
+    <a id="evs-link" href="/" title="TESViS Subsets">TESViS Home</a>
+    <a id="nasa-link" href="https://www.nasa.gov" title="NASA" target="_blank">NASA Home</a>
+    <nav class="menubox">
+
+      <ul class="nav">
+
+        <li class="top first home"><a class="top_link" href="/" title="ORNL DAAC home"><span class="fa fa-home fa-fw"></span><span class="home_text down">Home</span></a></li>
+        <li class="top"><a href="/data.html" class="top_link"><span class="down">Get Data</span></a></li>
+        <li class="top"><a href="/documentation.html" class="top_link"><span class="down">Documentation</span></a></li>
+        <li class="top"><a href="/resources.html" class="top_link"><span class="down">Resources</span></a></li>
+        <li class="top"><a href="/publications.html" class="top_link"><span class="down">Publications</span></a></li>
+        <li class="top nofoot"><a href="/citation.html" class="top_link"><span class="down">Citation</span></a></li>
+        <li class="top notab"><a href="mailto:uso@daac.ornl.gov">email us</a></li>
+      </ul>
+    
+    </nav>
+    <div id="signin" class="signin"></div>
+  </div>
+  <div class="menuBar"></div>
+</header>
+<!-- evheaderbox -->
+
+
+  <!-- Breadcrumbs -->
+  <div class="crumbs">
+    <a href="/">Home</a> > <a href="/data.html">Get Data</a> > <a href="/data/modis_webservice.html">MODIS Web Service</a> > Web Service User Interface
+  </div>
+  <span id="main-content"></span><script>var tabToHighlight = "Get Data";</script>
+
+  <div class="textarea">
+   <h1 class="pagetitle">Web Service User Interface</h1>
+
+   <div class="textarea swagger-section">
+    <div class="mainarea swagger-ui-wrap" id="mainarea"> </div>
+   </div>
+   <!--   textarea -->
+
+   <footer>
+    <div class="headWrapper" id="footerWrapper">
+      <div id="main-footer">
+        <!-- left section -->
+        <div class="mainFooterLeft">
+          <a href="https://www.ornl.gov" title="www.ornl.gov"> <!-- <object type="image/svg+xml" alt="ORNL home page" data="/graphics/logos/ORNL_33_opt.svg"> -->
+            <img alt="ORNL home page" src="/img/ORNL_twoline.png"> <!-- </object> -->
+          </a>
+        </div>
+
+        <!-- middle section -->
+        <div class="mainFooterMiddle">
+          <a href="https://www.nasa.gov/about/highlights/HP_Privacy.html" class="foot-link">Privacy Policy</a><span
+            class="foot-link"> | </span> <a href="https://daac.ornl.gov/help/" class="foot-link">Help</a>
+        </div>
+
+        <!-- right section -->
+        <div class="mainFooterRight">
+          <a class="usa-link-twitter" href="https://twitter.com/NASAEarthData" title="Follow us @NASAEarthData"> <span class="fa fa-twitter-square"
+            aria-hidden="true"></span><span class="sr-only">Follow us @ORNLDAAC</span></a>
+          <a class="usa-link-youtube" href="https://www.youtube.com/channel/UCrZ-Cgk3DfiLPfHEReLzCfg/feed" title="NASAEarthData on YouTube">
+            <span class="fa fa-youtube-square" aria-hidden="true"></span><span class="sr-only">ORNL DAAC Videos on
+              YouTube</span></a>
+          <a class="usa-link-facebook" href="https://facebook.com/NASAEarthData" title="Like us on Facebook"> <span
+              class="fa fa-facebook-square" aria-hidden="true"></span><span class="sr-only">Like us on Facebook</span></a>
+          <a class="usa-social_link" href="https://github.com/ornldaac" title="ORNL DAAC on GitHub"> <span class="fa fa-github-square"
+              aria-hidden="true"></span><span class="sr-only">ORNL DAAC on GitHub</span></a>
+          <a class="usa-link-rss" href="https://daac-news.ornl.gov/rss.xml" title="ORNL DAAC News RSS Feed"> <span class="fa fa-rss-square"
+              aria-hidden="true"></span><span class="sr-only">ORNL DAAC News RSS Feed</span></a>
+        </div>
+      </div>
+      <!--main-footer-->
+
+
+      <hr>
+
+    </div>
+    <!-- headWrapper -->
+  </footer>
+
+
+<!-- Add utils.js -->
+<script src="//daac.ornl.gov/js/jquery.min.js"></script>
+<script src="/js/modis.js"></script>
+<script src="//daac.ornl.gov/js/utils.js"></script>
+<script >highlight(tabToHighlight);</script>
+
+<!-- integrated search bar js -->
+<script src="//daac.ornl.gov/js/jquery-ui/jquery-ui.min.js"></script>
+<script src="//daac.ornl.gov/js/succinct-master/jQuery.succinct.min.js"></script>
+
+<!-- Add Tophat -->
+<script src="https://cdn.earthdata.nasa.gov/tophat2/tophat2.js" id="earthdata-tophat-script" data-current-daac="ORNL DAAC" data-show-fbm="false" data-width="950"></script>
+
+<!-- End Add Tophat -->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNP7MLF"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!-- Add Status App -->
+<script src="https://status.earthdata.nasa.gov/assets/banner_widget.js"></script>
+
+<!-- common.js includes highlight current tab, Google Analytics, DAP UA -->
+<script src="//daac.ornl.gov/js/common.min.js"></script>
+
+<!-- add EUI js -->
+<script src="//daac.ornl.gov/js/eui/custom/javascript/eui.min.js"></script>
+
+
+<!-- Add Swagger UI -->
+<link href="/rst/static/js/swagger-ui/css/typography.css" media='screen' rel='stylesheet' type='text/css'/>
+<link href="/rst/static/js/swagger-ui/css/reset.css" media='screen' rel='stylesheet' type='text/css'/>
+<link href="/rst/static/js/swagger-ui/css/screen.css" media='screen' rel='stylesheet' type='text/css'/>
+<link href="/rst/static/js/swagger-ui/css/reset.css" media='print' rel='stylesheet' type='text/css'/>
+<link href="/rst/static/js/swagger-ui/css/print.css" media='print' rel='stylesheet' type='text/css'/>
+<script src="/rst/static/js/swagger-ui/lib/object-assign-pollyfill.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/jquery-1.8.0.min.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/jquery.slideto.min.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/jquery.wiggle.min.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/jquery.ba-bbq.min.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/handlebars-4.0.5.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/lodash.min.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/backbone-min.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/swagger-ui.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/highlight.9.1.0.pack.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/highlight.9.1.0.pack_extended.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/jsoneditor.min.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/marked.js" type='text/javascript'></script>
+<script src="/rst/static/js/swagger-ui/lib/swagger-oauth.js" type='text/javascript'></script>
+<script type="text/javascript">
+  $(function () {
+    // Get array of request parameter filters via Jinja
+    var request_param_filters = [
+    ];
+
+    hljs.configure({
+      highlightSizeThreshold: 5000
+    });
+
+    // Get Swagger spec -> api
+    api = {"basePath":"/rst","definitions":{"ModisBand":{"properties":{"add_offset":{"description":"Add 'add_offset' to the data values of a variable. If 'scale_factor' is also present, 'add_offset' should be added to the scaled data","type":"string"},"band":{"description":"Short name","type":"string"},"description":{"description":"Long name; A descriptive name that indicates a variable's content","type":"string"},"fill_value":{"description":"Value used to represent missing or undefined data","type":"string"},"scale_factor":{"description":"Multiply data values by the 'scale_factor'","type":"string"},"units":{"description":"Units of measurement","type":"string"},"valid_range":{"description":"Smallest and largest valid values of a variable","type":"string"}},"required":["band","description","units","valid_range","fill_value","scale_factor","add_offset"],"type":"object"},"ModisData":{"properties":{"band":{"description":"Band name","type":"string"},"cellsize":{"description":"Resolution of the data","format":"float","type":"number"},"header":{"description":"Header for the returned subset","type":"string"},"latitude":{"description":"Latitude in degrees of the subset location","format":"float","type":"number"},"longitude":{"description":"Longitude in degrees of the subset location","format":"float","type":"number"},"ncols":{"description":"Number of columns","format":"float","type":"number"},"nrows":{"description":"Number of rows","format":"float","type":"number"},"scale":{"description":"Data value scale","format":"float","type":"number"},"subset":{"description":"Subset data","items":{"$ref":"#/definitions/ModisSubset"},"type":"array"},"units":{"description":"Band units","format":"float","type":"number"},"xllcorner":{"description":"X-Longitude of the corner of lower left pixel in native projection","format":"float","type":"number"},"yllcorner":{"description":"Y-Latitude of the corner of lower left pixel in native projection","format":"float","type":"number"}},"required":["xllcorner","yllcorner","cellsize","nrows","ncols","band","units","scale","latitude","longitude","header","subset"],"type":"object"},"ModisDate":{"properties":{"calendar_date":{"description":"Calendar date","format":"date","type":"string"},"modis_date":{"description":"MODIS composite date","type":"string"}},"required":["modis_date","calendar_date"],"type":"object"},"ModisProduct":{"properties":{"description":{"description":"Long name","type":"string"},"frequency":{"description":"Dataset update frequency","type":"string"},"product":{"description":"Short name","type":"string"},"resolution_meters":{"description":"Size of a single pixel in meters","format":"int32","type":"number"}},"required":["product","description","frequency","resolution_meters"],"type":"object"},"ModisSite":{"properties":{"country":{"description":"Country of the site location","type":"string"},"latitude":{"description":"Latitude in degrees of the site location","format":"float","type":"number"},"longitude":{"description":"Longitude in degrees of the site location","format":"float","type":"number"},"network":{"description":"Subset network","type":"string"},"siteid":{"description":"Unique site identifier","type":"string"},"sitename":{"description":"Site name","type":"string"},"state":{"description":"State of the site location","type":"string"}},"required":["siteid","sitename","network","latitude","longitude","state","country"],"type":"object"},"ModisSubset":{"properties":{"band":{"description":"Band name","type":"string"},"calendar_date":{"description":"Calendar date","format":"date","type":"string"},"data":{"description":"Data values","items":{"format":"float","type":"number"},"type":"array"},"filename":{"description":"Filename","type":"string"},"modis_date":{"description":"MODIS composite date","type":"string"},"proc_date":{"description":"Data processing date","type":"string"},"tile":{"description":"Subset tile index","type":"string"}},"required":["modis_date","calendar_date","band","tile","proc_date","data"],"type":"object"},"ModisSubsetStatistics":{"properties":{"band":{"description":"Band name","type":"string"},"calendar_date":{"description":"Calendar date","format":"date","type":"string"},"modis_date":{"description":"MODIS composite date","type":"string"},"pixels_pass":{"description":"Number of unfiltered pixels in the subset","format":"int32","type":"number"},"pixels_pass_rel":{"description":"Percentage of unfiltered pixels in the subset","format":"float","type":"number"},"pixels_total":{"description":"Number of pixels in the subset","format":"int32","type":"number"},"proc_date":{"description":"Data processing date","type":"string"},"value_center":{"description":"Data value at the center of the subset","format":"float","type":"number"},"value_max":{"description":"Maximum subset data value","format":"float","type":"number"},"value_mean":{"description":"Mean of subset data values","format":"float","type":"number"},"value_min":{"description":"Minimum subset data value","format":"float","type":"number"},"value_range":{"description":"Range of subset data values","format":"float","type":"number"},"value_stddev":{"description":"Standard deviation of subset data values","format":"float","type":"number"},"value_sum":{"description":"Sum of subset data values","format":"float","type":"number"},"value_variance":{"description":"Variance of subset data values","format":"float","type":"number"}},"required":["modis_date","calendar_date","band","value_center","value_min","value_max","value_sum","value_range","value_mean","value_variance","value_stddev","pixels_total","pixels_pass","pixels_pass_rel","proc_date"],"type":"object"},"NetworkSite":{"properties":{"latitude":{"description":"Latitude in degrees of the site location","format":"float","type":"number"},"longitude":{"description":"Longitude in degrees of the site location","format":"float","type":"number"},"network":{"description":"Subset network","type":"string"},"network_siteid":{"description":"Unique network site identifier","type":"string"},"network_sitename":{"description":"Network site name","type":"string"},"network_siteurl":{"description":"Network site link","type":"string"}},"required":["network_siteid","network_sitename","network_siteurl","network","latitude","longitude"],"type":"object"}},"externalDocs":{"description":"TESViS Subsets home","url":"https://modis.ornl.gov/"},"host":"modis.ornl.gov","info":{"description":"The Web service provides users with subsets of terrestrial ecology data products through standards based [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) (REpresentational State Transfer) Web service. Through the Web service users can access functions to execute on their machine. A list of functions available to users are provided in the table below. The web service is built on ORNL DAAC's [Terrestrial Ecology Subsetting & Visualization Services (TESViS)](https://daac.ornl.gov/globalsubset/) that provides customized subsets and visualization of terrestrial ecology data products for any land location on the globe.\n\n  Using the Web Service users can\n\n  * Retrieve subsets through command line operation\n  * Get subsets directly into software such as R, Python and integrate the subsets into client side workflow\n  * Write custom code to use the subsets for visualization or data reformatting\n  .. and much more\n","title":"TESViS Web Service","version":"1.7.0"},"paths":{"/api/v1/networks":{"get":{"operationId":"get_networks","parameters":[],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"type":"string"}}},"summary":"Get available networks.","tags":["networks"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.networks_controller"}},"/api/v1/products":{"get":{"description":"Product short name is used.","operationId":"get_products","parameters":[{"description":"Only display products from the specified sensor.<br>Available sensors: MODIS-Terra, MODIS-Aqua, MODIS-TerraAqua, VIIRS-SNPP, Daymet, SMAP, ECOSTRESS, SIFESDR.<br>Default: all sensors","in":"query","name":"sensor","required":false,"type":"string"},{"description":"Only display products available for the specified tool.<br>Available tools: FixedSite, GlobalSubset.<br>Default: all tools","in":"query","name":"tool","required":false,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"items":{"$ref":"#/definitions/ModisProduct"},"type":"array"}}},"summary":"Get available products.","tags":["products"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.products_controller"}},"/api/v1/sites":{"get":{"operationId":"get_sites","parameters":[],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"items":{"$ref":"#/definitions/ModisSite"},"type":"array"}}},"summary":"Get available fixed sites.","tags":["sites"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.sites_controller"}},"/api/v1/{network}/sites":{"get":{"operationId":"get_network_sites","parameters":[{"description":"Name of the network to query.","in":"path","name":"network","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"items":{"$ref":"#/definitions/NetworkSite"},"type":"array"}}},"summary":"Get available fixed sites in the network.","tags":["sites"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.sites_controller"}},"/api/v1/{product}/bands":{"get":{"operationId":"get_bands","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"items":{"$ref":"#/definitions/ModisBand"},"type":"array"}},"404":{"description":"Product not found"}},"summary":"Get available bands for a product.","tags":["bands"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.bands_controller"}},"/api/v1/{product}/dates":{"get":{"operationId":"get_dates","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Latitude in geographic Lat/Long WGS 84 coordinate system.","format":"float","in":"query","name":"latitude","required":true,"type":"number"},{"description":"Longitude in geographic Lat/Long WGS 84 coordinate system.","format":"float","in":"query","name":"longitude","required":true,"type":"number"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"items":{"$ref":"#/definitions/ModisDate"},"type":"array"}},"400":{"description":"No {product} data available for {latitude} {longitude} location."},"404":{"description":"Product not found"}},"summary":"Get available dates for a product.","tags":["dates"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.dates_controller"}},"/api/v1/{product}/subset":{"get":{"operationId":"get_subset","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Latitude in geographic Lat/Long WGS 84 coordinate system.","format":"float","in":"query","name":"latitude","required":true,"type":"number"},{"description":"Longitude in geographic Lat/Long WGS 84 coordinate system.","format":"float","in":"query","name":"longitude","required":true,"type":"number"},{"description":"Band to retrieve. Dafault: all bands","in":"query","name":"band","required":false,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"},{"description":"Size in km of the subset above and below the center location.","format":"int32","in":"query","name":"kmAboveBelow","required":true,"type":"integer"},{"description":"Size in km of the subset left and right of the center location.","format":"int32","in":"query","name":"kmLeftRight","required":true,"type":"integer"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"$ref":"#/definitions/ModisData"}},"400":{"description":"Invalid band {band} for product {product}."},"404":{"description":"Product not found"}},"summary":"Get subset and detailed projection information for the location, product and date combination.","tags":["subset"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_controller"}},"/api/v1/{product}/subsetOrder":{"get":{"description":"On success, this returns an order ID and an email with a link to the subset order will be dispatched to the provided email address.","operationId":"get_subset_order","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Latitude in geographic Lat/Long WGS 84 coordinate system.","format":"float","in":"query","name":"latitude","required":true,"type":"number"},{"description":"Longitude in geographic Lat/Long WGS 84 coordinate system.","format":"float","in":"query","name":"longitude","required":true,"type":"number"},{"description":"Email address to which this order will be sent.","format":"email","in":"query","name":"email","required":true,"type":"string"},{"description":"Unique tag for the order.","in":"query","maxLength":8,"name":"uid","required":true,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"},{"description":"Size in km of the subset above and below the center location.","format":"int32","in":"query","name":"kmAboveBelow","required":true,"type":"integer"},{"description":"Size in km of the subset left and right of the center location.","format":"int32","in":"query","name":"kmLeftRight","required":true,"type":"integer"},{"description":"Projection type of the generated GeoTIFF coordinates.<br>Available projections: <br>&emsp;SIN ... MODIS Sinusoidal Projection<br>&emsp;GEOG ... Geographic Lat/long.<br>Default: SIN","in":"query","name":"projection","required":false,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"type":"string"}},"400":{"description":"No data available for time period {startDate} to {endDate} for {product} {latitude} {longitude} combination"},"404":{"description":"Product not found"}},"summary":"Order subset and detailed projection information for the location, product and date combination.","tags":["subsetOrder"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_order_controller"}},"/api/v1/{product}/{network}/{network_siteid}/dates":{"get":{"operationId":"get_network_site_dates","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Name of the network to query.","in":"path","name":"network","required":true,"type":"string"},{"description":"Network assigned identifier of the fixed field site.","in":"path","name":"network_siteid","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"items":{"$ref":"#/definitions/ModisDate"},"type":"array"}},"400":{"description":"No {product} data available for {network} {network_siteid} location."},"404":{"description":"Product not found"}},"summary":"Get available dates for a product.","tags":["dates"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.dates_controller"}},"/api/v1/{product}/{network}/{network_siteid}/subset":{"get":{"operationId":"get_network_site_subset","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Name of the network to query.","in":"path","name":"network","required":true,"type":"string"},{"description":"Network assigned identifier of the fixed field site.","in":"path","name":"network_siteid","required":true,"type":"string"},{"description":"Band to retrieve. Dafault: all bands","in":"query","name":"band","required":false,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"$ref":"#/definitions/ModisData"}},"400":{"description":"Invalid band {band} for product {product}."},"404":{"description":"Product not found"}},"summary":"Get subset and detailed projection information for the site, product and date combination.","tags":["subset"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_controller"}},"/api/v1/{product}/{network}/{network_siteid}/subsetFiltered":{"get":{"operationId":"get_network_site_subset_filtered","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Name of the network to query.","in":"path","name":"network","required":true,"type":"string"},{"description":"Network assigned identifier of the fixed field site.","in":"path","name":"network_siteid","required":true,"type":"string"},{"description":"Band to retrieve. Dafault: all bands","in":"query","name":"band","required":false,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"$ref":"#/definitions/ModisData"}},"400":{"description":"Invalid band {band} for product {product}."},"404":{"description":"Product not found"}},"summary":"Get quality filtered subset and detailed projection information for the site, product and date combination.","tags":["subsetFiltered"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_filtered_controller"}},"/api/v1/{product}/{network}/{network_siteid}/subsetStatistics":{"get":{"operationId":"get_network_site_subset_statistics","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Name of the network to query.","in":"path","name":"network","required":true,"type":"string"},{"description":"Network assigned identifier of the fixed field site.","in":"path","name":"network_siteid","required":true,"type":"string"},{"description":"Band to retrieve. Dafault: all bands","in":"query","name":"band","required":false,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"description":"Subset statistics","items":{"$ref":"#/definitions/ModisSubsetStatistics"},"type":"array"}},"400":{"description":"Invalid band {band} for product {product}."},"404":{"description":"Product not found"}},"summary":"Get statistics of the subset for the site, product and date combination.","tags":["subsetStatistics"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_statistics_controller"}},"/api/v1/{product}/{siteid}/dates":{"get":{"operationId":"get_site_dates","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Identifier of the fixed field site.","in":"path","name":"siteid","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"items":{"$ref":"#/definitions/ModisDate"},"type":"array"}},"400":{"description":"No {product} data available for {siteid} location."},"404":{"description":"Product not found"}},"summary":"Get available dates for a product.","tags":["dates"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.dates_controller"}},"/api/v1/{product}/{siteid}/subset":{"get":{"operationId":"get_site_subset","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Identifier of the fixed field site.","in":"path","name":"siteid","required":true,"type":"string"},{"description":"Band to retrieve. Dafault: all bands","in":"query","name":"band","required":false,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"$ref":"#/definitions/ModisData"}},"400":{"description":"Invalid band {band} for product {product}."},"404":{"description":"Product not found"}},"summary":"Get subset and detailed projection information for the site, product and date combination.","tags":["subset"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_controller"}},"/api/v1/{product}/{siteid}/subsetFiltered":{"get":{"operationId":"get_site_subset_filtered","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Identifier of the fixed field site.","in":"path","name":"siteid","required":true,"type":"string"},{"description":"Band to retrieve. Dafault: all bands","in":"query","name":"band","required":false,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"$ref":"#/definitions/ModisData"}},"400":{"description":"Invalid band {band} for product {product}."},"404":{"description":"Product not found"}},"summary":"Get quality filtered subset and detailed projection information for the site, product and date combination.","tags":["subsetFiltered"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_filtered_controller"}},"/api/v1/{product}/{siteid}/subsetStatistics":{"get":{"operationId":"get_site_subset_statistics","parameters":[{"description":"Short name of the product to query.","in":"path","name":"product","required":true,"type":"string"},{"description":"Identifier of the fixed field site.","in":"path","name":"siteid","required":true,"type":"string"},{"description":"Band to retrieve. Dafault: all bands","in":"query","name":"band","required":false,"type":"string"},{"description":"Composite start date (AYYYYDDD) of the subset period.","in":"query","name":"startDate","required":true,"type":"string"},{"description":"Composite end date (AYYYYDDD) of the subset period.","in":"query","name":"endDate","required":true,"type":"string"}],"produces":["application/json","text/csv"],"responses":{"200":{"description":"Successful operation","schema":{"description":"Subset statistics","items":{"$ref":"#/definitions/ModisSubsetStatistics"},"type":"array"}},"400":{"description":"Invalid band {band} for product {product}."},"404":{"description":"Product not found"}},"summary":"Get statistics of the subset for the site, product and date combination.","tags":["subsetStatistics"],"x-swagger-router-controller":"frontend.rest_frontend.controllers.subset_statistics_controller"}}},"schemes":["https"],"swagger":"2.0","tags":[{"description":"The list of available products.","externalDocs":{"description":"The Land Processes DAAC provides information on all MODIS Land products.","url":"https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table"},"name":"products"}]};
+
+    // Load Swagger UI
+    window.swaggerUi = new SwaggerUi({
+      url: "localhost",
+      spec: api,
+      // https://github.com/zalando/connexion/issues/110
+      validatorUrl: null,
+      dom_id: "mainarea",
+      supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+      onComplete: function(swaggerApi, swaggerUi){
+        if(typeof initOAuth == "function") {
+          initOAuth({
+            clientId: "your-client-id",
+            clientSecret: "your-client-secret-if-required",
+            realm: "your-realms",
+            appName: "your-app-name",
+            scopeSeparator: " ",
+            additionalQueryStringParams: {}
+          });
+        }
+        //TODO: Add operationsSorter option
+      },
+      onFailure: function(data) {
+        log("Unable to Load SwaggerUI");
+      },
+      docExpansion: "list",
+      jsonEditor: false,
+      defaultModelRendering: 'schema',
+      showRequestHeaders: false,
+      apisSorter: function(a, b) {
+        var SORT_ORDER = {
+          'products': 1,
+          'networks': 2,
+          'sites': 3,
+          'dates': 4,
+          'bands': 5,
+          'subset': 6,
+          'subsetFiltered': 7,
+          'subsetStatistics': 8,
+          'subsetOrder': 9
+        };
+        return (SORT_ORDER[a.name] || 100) - (SORT_ORDER[b.name] || 100); // "|| 100" ... List API's not in SORT_ORDER at the end
+      },
+      requestInterceptor: function() {
+        // Split this.url into url_path and url_query
+        var qpos = this.url.indexOf('?');
+        var url_path = qpos !== -1 ? this.url.substr(0, qpos) : this.url;
+        var url_query = qpos !== -1 ? this.url.substr(qpos + 1) : "";
+
+        // Parse query_params from url_query
+        var query_params = {};
+        if (qpos !== -1)
+        {
+          var QUERY_PARAM_REGEX = /([^&=]+)(?:=([^&]+))?/g;
+          while ((values = QUERY_PARAM_REGEX.exec(url_query)) !== null)
+            query_params[values[1]] = values[2];
+        }
+
+        // Modify path_params and query_params based on request_param_filters
+        var path_params = {};
+        request_param_filters.forEach(request_filter => {
+          // Handle 'path'-type request_param_filters
+          if (request_filter.param_type === 'path' && request_filter.url_pattern.test(url_path))
+            path_params[request_filter.param] = request_filter.value;
+
+          // Handle 'query'-type request_param_filters
+          if (request_filter.param_type === 'query' && request_filter.url_pattern.test(url_path))
+            query_params[request_filter.param] = request_filter.value;
+        })
+
+        // Set path_params in url_path
+        var PATH_PARAM_REGEX = /{([^}]+)}/g;
+        url_path = url_path.replace(PATH_PARAM_REGEX, (match, param) => param in path_params ? path_params[param] : match);
+
+        // Append query_params to url_path
+        this.url = url_path
+        var query_params_array = []
+        for (let param in query_params)
+          query_params_array.push(query_params[param] ? param + '=' + query_params[param] : param);
+        if (query_params_array.length !== 0)
+          this.url += '?' + query_params_array.join('&');
+      }
+    });
+    window.swaggerUi.load();
+    function log() {
+      if ('console' in window) {
+        console.log.apply(console, arguments);
+      }
+    }
+});
+</script>
+ </div>
+ <!-- pagebox -->
+</body>
+</html>

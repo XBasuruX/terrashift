@@ -1,0 +1,37 @@
+[
+  {
+    "source": "smap",
+    "url": "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=SPL3SMP_E&version=005&page_size=1",
+    "retrieved_at": "2026-10-31T08:08:57.005742+00:00",
+    "record_count": 0,
+    "status": "metadata captured"
+  },
+  {
+    "source": "imerg",
+    "url": "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=GPM_3IMERGDF&version=07&page_size=1",
+    "retrieved_at": "2026-10-31T08:08:57.090408+00:00",
+    "record_count": 1,
+    "status": "metadata captured"
+  },
+  {
+    "source": "ecostress",
+    "url": "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ECO_L2T_LSTE&version=003&page_size=1",
+    "retrieved_at": "2026-10-31T08:08:57.071242+00:00",
+    "record_count": 1,
+    "status": "metadata captured"
+  },
+  {
+    "source": "hls",
+    "url": "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=HLSL30&version=2.0&page_size=1",
+    "retrieved_at": "2026-10-31T08:08:57.339837+00:00",
+    "record_count": 1,
+    "status": "metadata captured"
+  },
+  {
+    "source": "modis",
+    "url": "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=MOD13Q1&version=061&page_size=1",
+    "retrieved_at": "2026-10-31T08:08:57.062738+00:00",
+    "record_count": 1,
+    "status": "metadata captured"
+  }
+]

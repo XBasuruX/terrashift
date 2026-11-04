@@ -1,0 +1,322 @@
+.cesium-map .map-surface:after {
+  display: none;
+}
+.cesium-map .map-top {
+  right: 90px;
+  flex-wrap: wrap;
+}
+.cesium-map .map-bottom {
+  pointer-events: none;
+  bottom: 30px;
+}
+.cesium-viewer-bottom {
+  max-width: 70%;
+}
+.draw-toolbar {
+  position: absolute;
+  bottom: 55px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 15px;
+  background: #f8faeff2;
+  border-radius: 8px;
+  font-size: 11px;
+  z-index: 4;
+}
+.draw-toolbar button {
+  padding: 8px;
+  background: #dde8c9;
+  border-radius: 5px;
+}
+.draw-toolbar button:disabled {
+  opacity: 0.4;
+}
+.farm-isolated {
+  height: 440px;
+  margin: 20px 0;
+}
+.farm-library {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 15px 0;
+}
+.farm-entity {
+  text-align: left;
+  border: 1px solid #d9e2cc;
+  padding: 18px;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  background: #f4f7eb;
+}
+.farm-entity.selected {
+  border: 2px solid #759552;
+  background: #eaf0df;
+}
+.farm-entity small,
+.farm-entity span {
+  color: #809170;
+  font-size: 10px;
+}
+.land-record {
+  border-bottom: 1px solid #dde4d3;
+  padding: 15px 0;
+}
+.land-record summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.sentinel-preview {
+  min-height: 180px;
+  max-height: 600px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: repeating-linear-gradient(45deg, #e8eddf, #e8eddf 10px, #f1f5e9 10px, #f1f5e9 20px);
+  margin: 16px 0;
+}
+.sentinel-preview img {
+  width: 100%;
+  max-height: none;
+  height: auto;
+}
+.cesium-map .map-layer-panel {
+  z-index: 6;
+  max-height: 80%;
+  overflow: auto;
+}
+.cesium-map .map-caption {
+  pointer-events: none;
+}
+.cesium-widget-credits {
+  font-size: 9px !important;
+}
+.optimized-layers {
+  width: 340px !important;
+  top: 64px !important;
+  right: 12px !important;
+  max-height: calc(100% - 100px) !important;
+  padding: 18px !important;
+  background: #fafcf7fa !important;
+  box-shadow: 0 12px 36px #172d2055;
+  z-index: 12 !important;
+}
+.optimized-layers label {
+  font-size: 11px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px !important;
+}
+.optimized-layers select {
+  max-width: 180px;
+  font-size: 10px;
+  padding: 6px;
+}
+.optimized-layers input[type='range'] {
+  max-width: 120px;
+}
+.optimized-layers h4 {
+  font-size: 12px;
+  margin: 16px 0 10px;
+  padding-top: 12px;
+  border-top: 1px solid #dce5d1;
+}
+.layer-panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.layer-panel-title strong {
+  margin: 0 !important;
+}
+.layer-row {
+  border: 1px solid #e0e6d6;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #f1f5e9;
+}
+.layer-row > label:first-child {
+  justify-content: flex-start;
+}
+.map-zoom-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+.map-zoom-presets button {
+  background: #e1ebd2;
+  border: 1px solid #c9d7b6;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 10px;
+}
+.vector-legend {
+  display: grid;
+  gap: 6px;
+  margin-top: 9px;
+}
+.vector-legend span {
+  display: flex;
+  gap: 7px;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.vector-legend i {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.map-scale-readout {
+  position: absolute;
+  bottom: 50px;
+  left: 12px;
+  background: #203728db;
+  color: #ecf3e4;
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-size: 9px;
+  pointer-events: none;
+}
+.map-feature-info {
+  position: absolute;
+  bottom: 65px;
+  left: 12px;
+  max-height: 230px;
+  max-width: 340px;
+  overflow: auto;
+  padding: 16px;
+  background: #fcfff6f5;
+  border: 1px solid #c6d5b6;
+  border-radius: 8px;
+  z-index: 10;
+  font-size: 10px;
+}
+.map-feature-info > button {
+  float: right;
+  padding-left: 20px;
+}
+.map-feature-info strong {
+  display: block;
+  margin-bottom: 12px;
+}
+.map-feature-info > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 7px 0;
+  overflow-wrap: anywhere;
+}
+.map-feature-info b {
+  font-weight: 500;
+}
+.satellite-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  padding: 18px;
+  border-radius: 8px;
+  background: #eef3e6;
+  border: 1px solid #dce4d0;
+}
+.satellite-controls label {
+  font-size: 11px;
+}
+.spectral-legend {
+  padding: 18px;
+  background: #f7f9ef;
+  border: 1px solid #e0e8d5;
+  border-radius: 8px;
+  margin-top: 15px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.spectral-legend strong,
+.spectral-legend small {
+  display: block;
+}
+.spectral-legend p {
+  margin: 10px 0;
+}
+.water-ramp,
+.moisture-ramp {
+  width: 220px;
+  height: 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+.water-ramp {
+  background: linear-gradient(90deg, #9b6e41, #e1e1bc, #50bcd3, #054ba0);
+}
+.moisture-ramp {
+  background: linear-gradient(90deg, #a05a28, #d8b479, #9bc275, #166940);
+}
+.detail-preview-backdrop {
+  position: fixed;
+  inset: 20px;
+  z-index: 120;
+  background: #f8fbf1;
+  box-shadow: 0 0 0 40px #152c20cc;
+  border: 1px solid #bbcdb0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.detail-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.detail-preview-head label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 200px;
+}
+.detail-preview-scroll {
+  overflow: auto;
+  flex: 1;
+  background: #283b2f;
+}
+.detail-preview-backdrop > p {
+  font-size: 11px;
+  color: #7d8c6e;
+}
+.cesium-map.large {
+  height: 650px;
+}
+.farm-isolated {
+  height: 540px;
+}
+@media (max-width: 600px) {
+  .satellite-controls {
+    grid-template-columns: 1fr;
+  }
+  .optimized-layers {
+    width: calc(100% - 24px) !important;
+  }
+  .detail-preview-head {
+    flex-wrap: wrap;
+  }
+  .detail-preview-backdrop {
+    inset: 10px;
+    padding: 12px;
+  }
+  .cesium-map.large {
+    height: 600px;
+  }
+}

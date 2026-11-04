@@ -1,0 +1,1415 @@
+{
+  "farm": {
+    "latitude": 8.3114,
+    "longitude": 80.4037,
+    "name": "Anuradhapura learning farm",
+    "area_ha": 12,
+    "soil": "loam",
+    "available_water_mm": 120,
+    "irrigation_mm": 80,
+    "season_start_month": 10,
+    "season_length_days": 120,
+    "previous_crop": "rice",
+    "existing": [
+      "rice",
+      "rice",
+      "maize",
+      "rice"
+    ],
+    "allowed_crops": [
+      "rice",
+      "maize",
+      "mungbean",
+      "cowpea",
+      "sorghum",
+      "groundnut"
+    ],
+    "equipment": "paddy",
+    "market_note": "Confirm buyers for pulses before changing the rotation.",
+    "priorities": {
+      "water": 40,
+      "diversity": 35,
+      "suitability": 25
+    }
+  },
+  "provenance": {
+    "requested_mode": "cached",
+    "mode": "cached",
+    "source": "NASA POWER / MERRA-2",
+    "classification": "gridded estimate",
+    "latitude": 8.3114,
+    "longitude": 80.4037,
+    "start": "2023-01-01",
+    "end": "2025-12-31",
+    "time_standard": "LST",
+    "resolution": "Meteorology 0.5\u00b0 \u00d7 0.625\u00b0; solar ~1\u00b0",
+    "request_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MIN%2CT2M_MAX%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M&community=AG&longitude=80.4037&latitude=8.3114&start=20230101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "power_anuradhapura_2023_2025.json",
+    "sha256": "5e52230f8554011389af033a655a7b4c8e95e234d6c8acdb5e93e75dff69c361",
+    "warning": null,
+    "missing_values": 0
+  },
+  "rotations": [
+    {
+      "sequence": [
+        "rice",
+        "rice",
+        "maize",
+        "rice"
+      ],
+      "score": 67.54,
+      "metrics": {
+        "water": 84.48,
+        "diversity": 25.0,
+        "suitability": 100.0
+      },
+      "contributions": {
+        "water": 33.792,
+        "diversity": 8.75,
+        "suitability": 25.0
+      },
+      "feasible": true,
+      "water_demand_mm": 1954.8,
+      "water_deficit_mm": 303.5,
+      "irrigation_volume_m3": 38400,
+      "legume_seasons": 0,
+      "family_breaks": 0,
+      "seasons": [
+        {
+          "crop": "rice",
+          "slot": 1,
+          "start_month": 10,
+          "days": 120,
+          "demand_mm": 448.39,
+          "rainfall_mm": 1201.13,
+          "deficit_mm": 0.0,
+          "overflow_mm": 787.03,
+          "heat_days": 0,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 59.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 64.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 115.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 115.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 113.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 116.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 116.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 116.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 116.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 116.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 116.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 111.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 92,
+              "storage_mm": 116.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 99,
+              "storage_mm": 116.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 106,
+              "storage_mm": 116.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 113,
+              "storage_mm": 116.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 120,
+              "storage_mm": 105.7,
+              "deficit_mm": 0.0
+            }
+          ]
+        },
+        {
+          "crop": "rice",
+          "slot": 2,
+          "start_month": 4,
+          "days": 120,
+          "demand_mm": 584.81,
+          "rainfall_mm": 293.08,
+          "deficit_mm": 151.73,
+          "overflow_mm": 0.0,
+          "heat_days": 5,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [
+            "5 replay days exceed illustrative heat threshold."
+          ],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 60.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 62.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 46.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 24.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 16.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 44.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 49.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 86.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 73.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 56.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 34.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 13.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 0,
+              "deficit_mm": 3.79
+            },
+            {
+              "day": 92,
+              "storage_mm": 0,
+              "deficit_mm": 3.43
+            },
+            {
+              "day": 99,
+              "storage_mm": 0,
+              "deficit_mm": 4.4
+            },
+            {
+              "day": 106,
+              "storage_mm": 0,
+              "deficit_mm": 4.37
+            },
+            {
+              "day": 113,
+              "storage_mm": 0,
+              "deficit_mm": 4.29
+            },
+            {
+              "day": 120,
+              "storage_mm": 0,
+              "deficit_mm": 4.7
+            }
+          ]
+        },
+        {
+          "crop": "maize",
+          "slot": 3,
+          "start_month": 10,
+          "days": 110,
+          "demand_mm": 336.83,
+          "rainfall_mm": 1156.62,
+          "deficit_mm": 0.0,
+          "overflow_mm": 842.63,
+          "heat_days": 0,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 60.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 72.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 116.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 116.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 116.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 117.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 117.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 117.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 117.1,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 117.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 116.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 92,
+              "storage_mm": 117.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 99,
+              "storage_mm": 117.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 106,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            }
+          ]
+        },
+        {
+          "crop": "rice",
+          "slot": 4,
+          "start_month": 4,
+          "days": 120,
+          "demand_mm": 584.81,
+          "rainfall_mm": 293.08,
+          "deficit_mm": 151.73,
+          "overflow_mm": 0.0,
+          "heat_days": 5,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [
+            "5 replay days exceed illustrative heat threshold."
+          ],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 60.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 62.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 46.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 24.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 16.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 44.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 49.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 86.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 73.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 56.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 34.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 13.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 0,
+              "deficit_mm": 3.79
+            },
+            {
+              "day": 92,
+              "storage_mm": 0,
+              "deficit_mm": 3.43
+            },
+            {
+              "day": 99,
+              "storage_mm": 0,
+              "deficit_mm": 4.4
+            },
+            {
+              "day": 106,
+              "storage_mm": 0,
+              "deficit_mm": 4.37
+            },
+            {
+              "day": 113,
+              "storage_mm": 0,
+              "deficit_mm": 4.29
+            },
+            {
+              "day": 120,
+              "storage_mm": 0,
+              "deficit_mm": 4.7
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "4 family repeats including the previous crop; investigate shared pests and diseases locally."
+      ],
+      "id": "existing",
+      "name": "Existing rotation",
+      "pareto": false,
+      "stress": [
+        {
+          "scenario": "Replay",
+          "score": 67.54,
+          "deficit_mm": 303.5
+        },
+        {
+          "scenario": "Dry \u221230%",
+          "score": 63.94,
+          "deficit_mm": 479.3
+        },
+        {
+          "scenario": "Warm +2\u00b0C",
+          "score": 66.81,
+          "deficit_mm": 354.2
+        },
+        {
+          "scenario": "Combined",
+          "score": 63.37,
+          "deficit_mm": 530.1
+        }
+      ],
+      "robust_score": 63.37,
+      "sensitivity": [
+        {
+          "delta": -2,
+          "score": 68.34
+        },
+        {
+          "delta": 0,
+          "score": 67.54
+        },
+        {
+          "delta": 2,
+          "score": 66.81
+        },
+        {
+          "delta": 4,
+          "score": 66.14
+        }
+      ]
+    },
+    {
+      "sequence": [
+        "cowpea",
+        "maize",
+        "groundnut",
+        "sorghum"
+      ],
+      "score": 99.26,
+      "metrics": {
+        "water": 98.14,
+        "diversity": 100.0,
+        "suitability": 100.0
+      },
+      "contributions": {
+        "water": 39.256,
+        "diversity": 35.0,
+        "suitability": 25.0
+      },
+      "feasible": true,
+      "water_demand_mm": 1311.7,
+      "water_deficit_mm": 24.4,
+      "irrigation_volume_m3": 38400,
+      "legume_seasons": 2,
+      "family_breaks": 4,
+      "seasons": [
+        {
+          "crop": "cowpea",
+          "slot": 1,
+          "start_month": 10,
+          "days": 90,
+          "demand_mm": 217.57,
+          "rainfall_mm": 1021.95,
+          "deficit_mm": 0.0,
+          "overflow_mm": 826.63,
+          "heat_days": 0,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 61.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 81.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 117.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 117.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 118.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 117.6,
+              "deficit_mm": 0.0
+            }
+          ]
+        },
+        {
+          "crop": "maize",
+          "slot": 2,
+          "start_month": 4,
+          "days": 110,
+          "demand_mm": 435.57,
+          "rainfall_mm": 290.86,
+          "deficit_mm": 24.41,
+          "overflow_mm": 19.71,
+          "heat_days": 2,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [
+            "2 replay days exceed illustrative heat threshold."
+          ],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 61.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 71.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 62.1,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 47.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 47.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 82.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 93.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 116.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 109.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 98.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 82.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 66.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 50.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 92,
+              "storage_mm": 31.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 99,
+              "storage_mm": 11.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 106,
+              "storage_mm": 0,
+              "deficit_mm": 3.37
+            }
+          ]
+        },
+        {
+          "crop": "groundnut",
+          "slot": 3,
+          "start_month": 10,
+          "days": 115,
+          "demand_mm": 312.25,
+          "rainfall_mm": 1196.17,
+          "deficit_mm": 0.0,
+          "overflow_mm": 906.49,
+          "heat_days": 0,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 60.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 75.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 117.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 116.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 117.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 117.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 117.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 118.1,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 117.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 92,
+              "storage_mm": 117.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 99,
+              "storage_mm": 117.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 106,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 113,
+              "storage_mm": 117.2,
+              "deficit_mm": 0.0
+            }
+          ]
+        },
+        {
+          "crop": "sorghum",
+          "slot": 4,
+          "start_month": 4,
+          "days": 105,
+          "demand_mm": 346.26,
+          "rainfall_mm": 289.89,
+          "deficit_mm": 0.0,
+          "overflow_mm": 56.03,
+          "heat_days": 0,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 62.1,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 77.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 73.9,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 65.1,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 70.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 110.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 116.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 117.1,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 114.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 107.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 95.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 78,
+              "storage_mm": 84.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 85,
+              "storage_mm": 73.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 92,
+              "storage_mm": 59.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 99,
+              "storage_mm": 43.2,
+              "deficit_mm": 0.0
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "Legume presence indicates potential nitrogen fixation; nodulation, residues and soil tests determine actual benefit."
+      ],
+      "id": "balanced",
+      "name": "Priority-led alternative",
+      "pareto": true,
+      "stress": [
+        {
+          "scenario": "Replay",
+          "score": 99.26,
+          "deficit_mm": 24.4
+        },
+        {
+          "scenario": "Dry \u221230%",
+          "score": 97.09,
+          "deficit_mm": 95.3
+        },
+        {
+          "scenario": "Warm +2\u00b0C",
+          "score": 99.0,
+          "deficit_mm": 34.4
+        },
+        {
+          "scenario": "Combined",
+          "score": 96.22,
+          "deficit_mm": 129.3
+        }
+      ],
+      "robust_score": 96.22,
+      "sensitivity": [
+        {
+          "delta": -2,
+          "score": 99.54
+        },
+        {
+          "delta": 0,
+          "score": 99.26
+        },
+        {
+          "delta": 2,
+          "score": 99.0
+        },
+        {
+          "delta": 4,
+          "score": 98.76
+        }
+      ]
+    },
+    {
+      "sequence": [
+        "mungbean",
+        "mungbean",
+        "mungbean",
+        "mungbean"
+      ],
+      "score": 73.75,
+      "metrics": {
+        "water": 100.0,
+        "diversity": 25.0,
+        "suitability": 100.0
+      },
+      "contributions": {
+        "water": 40.0,
+        "diversity": 8.75,
+        "suitability": 25.0
+      },
+      "feasible": true,
+      "water_demand_mm": 833.9,
+      "water_deficit_mm": 0.0,
+      "irrigation_volume_m3": 38400,
+      "legume_seasons": 4,
+      "family_breaks": 1,
+      "seasons": [
+        {
+          "crop": "mungbean",
+          "slot": 1,
+          "start_month": 10,
+          "days": 75,
+          "demand_mm": 184.79,
+          "rainfall_mm": 914.03,
+          "deficit_mm": 0.0,
+          "overflow_mm": 751.26,
+          "heat_days": 0,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 61.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 82.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 117.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 117.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            }
+          ]
+        },
+        {
+          "crop": "mungbean",
+          "slot": 2,
+          "start_month": 4,
+          "days": 75,
+          "demand_mm": 232.17,
+          "rainfall_mm": 275.77,
+          "deficit_mm": 0.0,
+          "overflow_mm": 85.12,
+          "heat_days": 2,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [
+            "2 replay days exceed illustrative heat threshold."
+          ],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 62.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 82.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 82.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 77.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 86.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 117.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 117.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 117.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 115.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 112.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 104.2,
+              "deficit_mm": 0.0
+            }
+          ]
+        },
+        {
+          "crop": "mungbean",
+          "slot": 3,
+          "start_month": 10,
+          "days": 75,
+          "demand_mm": 184.79,
+          "rainfall_mm": 914.03,
+          "deficit_mm": 0.0,
+          "overflow_mm": 751.26,
+          "heat_days": 0,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 61.8,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 82.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 117.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 117.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 117.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 117.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 118.0,
+              "deficit_mm": 0.0
+            }
+          ]
+        },
+        {
+          "crop": "mungbean",
+          "slot": 4,
+          "start_month": 4,
+          "days": 75,
+          "demand_mm": 232.17,
+          "rainfall_mm": 275.77,
+          "deficit_mm": 0.0,
+          "overflow_mm": 85.12,
+          "heat_days": 2,
+          "frost_days": 0,
+          "suitability": 100.0,
+          "feasible": true,
+          "warnings": [
+            "2 replay days exceed illustrative heat threshold."
+          ],
+          "trace": [
+            {
+              "day": 1,
+              "storage_mm": 62.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 8,
+              "storage_mm": 82.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 15,
+              "storage_mm": 82.2,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 22,
+              "storage_mm": 77.4,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 29,
+              "storage_mm": 86.6,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 36,
+              "storage_mm": 117.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 43,
+              "storage_mm": 117.0,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 50,
+              "storage_mm": 117.3,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 57,
+              "storage_mm": 115.7,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 64,
+              "storage_mm": 112.5,
+              "deficit_mm": 0.0
+            },
+            {
+              "day": 71,
+              "storage_mm": 104.2,
+              "deficit_mm": 0.0
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "3 family repeats including the previous crop; investigate shared pests and diseases locally.",
+        "Legume presence indicates potential nitrogen fixation; nodulation, residues and soil tests determine actual benefit."
+      ],
+      "id": "diverse",
+      "name": "Water-lean alternative",
+      "pareto": true,
+      "stress": [
+        {
+          "scenario": "Replay",
+          "score": 73.75,
+          "deficit_mm": 0.0
+        },
+        {
+          "scenario": "Dry \u221230%",
+          "score": 73.75,
+          "deficit_mm": 0.0
+        },
+        {
+          "scenario": "Warm +2\u00b0C",
+          "score": 73.75,
+          "deficit_mm": 0.0
+        },
+        {
+          "scenario": "Combined",
+          "score": 73.75,
+          "deficit_mm": 0.0
+        }
+      ],
+      "robust_score": 73.75,
+      "sensitivity": [
+        {
+          "delta": -2,
+          "score": 73.75
+        },
+        {
+          "delta": 0,
+          "score": 73.75
+        },
+        {
+          "delta": 2,
+          "score": 73.75
+        },
+        {
+          "delta": 4,
+          "score": 73.75
+        }
+      ]
+    }
+  ],
+  "weights": {
+    "water": 0.4,
+    "diversity": 0.35,
+    "suitability": 0.25
+  },
+  "candidate_count": 1295,
+  "frontier": [
+    {
+      "sequence": [
+        "cowpea",
+        "maize",
+        "groundnut",
+        "sorghum"
+      ],
+      "water": 98.14,
+      "diversity": 100.0,
+      "suitability": 100.0,
+      "score": 99.26
+    },
+    {
+      "sequence": [
+        "cowpea",
+        "sorghum",
+        "groundnut",
+        "mungbean"
+      ],
+      "water": 100.0,
+      "diversity": 87.5,
+      "suitability": 100.0,
+      "score": 95.62
+    }
+  ],
+  "frontier_total": 2,
+  "replay_year": null,
+  "scenario": {
+    "kind": "typical",
+    "temperature_delta": 0,
+    "rainfall_factor": 1
+  },
+  "model": "Educational screening model v1; no yield, profit, nutrient or erosion predictions",
+  "assumptions": [
+    "Month-day weather is averaged across selected years, or replayed from the driest/wettest complete selected year. Dry/wet selection uses annual rainfall, not seasonal extremes.",
+    "Four consecutive half-year planting slots; fixed crop durations and constant illustrative Kc. Independent seasons reset storage to 50% of user capacity.",
+    "Hargreaves ET\u2080 is uncalibrated; Ra is converted to equivalent water depth. Rice seepage and ponding are not modeled.",
+    "Daily bucket: rain + uniformly distributed irrigation; overflow is discarded; no capillary rise. Soil storage is farmer-entered, not SMAP.",
+    "Water score is fraction of modeled ET demand supplied. Diversity combines crop variety and family breaks. Suitability counts days inside illustrative temperature limits.",
+    "Weights express farmer preferences; scores are indices, not probabilities or predicted effectiveness. Market notes and root traits are contextual, not scored.",
+    "Stress tests are hypothetical perturbations of the chosen replay; no climate forecasts or statistical confidence intervals."
+  ]
+}

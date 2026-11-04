@@ -1,0 +1,11 @@
+{
+  "url": "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi?service=WMS&version=1.1.1&request=GetMap&layers=BlueMarble_ShadedRelief_Bathymetry&styles=&format=image%2Fjpeg&width=768&height=1024&srs=EPSG%3A3857&bbox=8794239.772668611%2C669141.0570442454%2C9128198.245048434%2C1118889.9748579597",
+  "source": "NASA GIBS Blue Marble Shaded Relief / Bathymetry",
+  "bbox": [
+    79,
+    6,
+    82,
+    10
+  ],
+  "classification": "Static visual backdrop; no acquisition date asserted; not model input"
+}

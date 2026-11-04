@@ -1,0 +1,8 @@
+fastapi>=0.115,<1
+uvicorn>=0.32,<1
+httpx>=0.28,<1
+pytest>=8,<10
+rasterio>=1.4,<2
+Pillow>=11,<14
+numpy>=2,<3
+shapely>=2,<3

@@ -1,0 +1,116 @@
+[
+  {
+    "file": "power_anuradhapura_2023_2025.json",
+    "raw_sha256": "2b171ce1c57b5e7682d4aa5354f664ce2d9fcea25a10b1b1c021dc3565abc233",
+    "header": {
+      "title": "NASA/POWER Source Native Resolution Daily Data",
+      "api": {
+        "version": "v2.10.1",
+        "name": "POWER Daily API"
+      },
+      "sources": [
+        "MERRA2",
+        "SYN1DEG",
+        "POWER"
+      ],
+      "fill_value": -999.0,
+      "time_standard": "LST",
+      "start": "20230101",
+      "end": "20251231"
+    },
+    "parameters": {
+      "T2M": {
+        "units": "C",
+        "longname": "Temperature at 2 Meters"
+      },
+      "T2M_MAX": {
+        "units": "C",
+        "longname": "Temperature at 2 Meters Maximum"
+      },
+      "T2M_MIN": {
+        "units": "C",
+        "longname": "Temperature at 2 Meters Minimum"
+      },
+      "PRECTOTCORR": {
+        "units": "mm/day",
+        "longname": "Precipitation Corrected"
+      },
+      "ALLSKY_SFC_SW_DWN": {
+        "units": "MJ/m^2/day",
+        "longname": "All Sky Surface Shortwave Downward Irradiance"
+      },
+      "RH2M": {
+        "units": "%",
+        "longname": "Relative Humidity at 2 Meters"
+      },
+      "WS2M": {
+        "units": "m/s",
+        "longname": "Wind Speed at 2 Meters"
+      }
+    },
+    "coordinates": [
+      80.404,
+      8.311,
+      84.84
+    ],
+    "retrieval_date": "2026-10-31",
+    "note": "Genuine direct NASA POWER JSON response; download request follows the documented Daily AG point API."
+  },
+  {
+    "file": "power_anuradhapura_2024.json",
+    "raw_sha256": "f4d040d1e7b3039179b1c52554e7648821b95e0477ac733baaadc5931255ad41",
+    "header": {
+      "title": "NASA/POWER Source Native Resolution Daily Data",
+      "api": {
+        "version": "v2.10.1",
+        "name": "POWER Daily API"
+      },
+      "sources": [
+        "MERRA2",
+        "SYN1DEG",
+        "POWER"
+      ],
+      "fill_value": -999.0,
+      "time_standard": "LST",
+      "start": "20240101",
+      "end": "20241231"
+    },
+    "parameters": {
+      "T2M": {
+        "units": "C",
+        "longname": "Temperature at 2 Meters"
+      },
+      "T2M_MAX": {
+        "units": "C",
+        "longname": "Temperature at 2 Meters Maximum"
+      },
+      "T2M_MIN": {
+        "units": "C",
+        "longname": "Temperature at 2 Meters Minimum"
+      },
+      "PRECTOTCORR": {
+        "units": "mm/day",
+        "longname": "Precipitation Corrected"
+      },
+      "ALLSKY_SFC_SW_DWN": {
+        "units": "MJ/m^2/day",
+        "longname": "All Sky Surface Shortwave Downward Irradiance"
+      },
+      "RH2M": {
+        "units": "%",
+        "longname": "Relative Humidity at 2 Meters"
+      },
+      "WS2M": {
+        "units": "m/s",
+        "longname": "Wind Speed at 2 Meters"
+      }
+    },
+    "coordinates": [
+      80.404,
+      8.311,
+      84.84
+    ],
+    "retrieval_date": "2026-10-31",
+    "note": "Genuine direct NASA POWER JSON response; download request follows the documented Daily AG point API."
+  }
+]
