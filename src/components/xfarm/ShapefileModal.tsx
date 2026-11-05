@@ -1,329 +1,145 @@
 'use client';
 import { useState } from 'react';
-import { Search, Grid, Clock, Folder, Check, FileCode, Layers, X, Upload } from 'lucide-react';
+import { FileUp, Layers, X } from 'lucide-react';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
+import { geometryFor, type Point } from './parcels';
+import { XFARM_FIELDS, type XFarmField } from './xfarmData';
 
-interface ShapefileModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onImportField: (fieldName: string, cropName: string, areaHa: number) => void;
+async function readParcels(file: File): Promise<XFarmField[]> {
+  let data: FeatureCollection | FeatureCollection[] | Feature | Geometry;
+  if (/\.(shp|zip)$/i.test(file.name)) {
+    const { default: read } = await import('shpjs');
+    const bytes = await file.arrayBuffer();
+    data = await read(/\.zip$/i.test(file.name) ? bytes : { shp: bytes });
+  } else data = JSON.parse(await file.text());
+  const features = (Array.isArray(data) ? data : [data]).flatMap((item) => {
+    if (item.type === 'FeatureCollection') return item.features;
+    if (item.type === 'Feature') return [item];
+    return [{ type: 'Feature', properties: {}, geometry: item } as Feature];
+  });
+  if (!features.length) throw Error('The file contains no fields.');
+  return features.map((feature, i) => {
+    const shape = feature.geometry;
+    if (shape?.type !== 'Polygon' || shape.coordinates.length !== 1)
+      throw Error('Each field must be one polygon with a single outer boundary.');
+    const ring = shape.coordinates[0];
+    if (
+      !ring.length ||
+      ring.some(
+        (p) =>
+          !Number.isFinite(p[0]) ||
+          !Number.isFinite(p[1]) ||
+          Math.abs(p[0]) > 180 ||
+          Math.abs(p[1]) >= 85,
+      )
+    )
+      throw Error('Use WGS84 coordinates or include the .prj in a ZIP.');
+    const coordinates: Point[] = ring.map(([lon, lat]) => [lat, lon]);
+    if (coordinates[0].join() === coordinates.at(-1)?.join()) coordinates.pop();
+    const g = geometryFor(coordinates),
+      properties = feature.properties ?? {};
+    const crop = String(properties.crop || 'Unassigned');
+    return {
+      id: crypto.randomUUID(),
+      name: String(
+        properties.name ||
+          file.name.replace(/\.[^.]+$/, '') + (features.length > 1 ? ' ' + (i + 1) : ''),
+      ),
+      group: String(properties.group || 'Imported'),
+      coordinates,
+      center: [g.latitude, g.longitude],
+      farmingType: 'Conventional',
+      surface_ha: g.area_ha,
+      currentCrop: crop,
+      currentVariety: '',
+      cropCategory: crop,
+      cropColor: '#769b56',
+      recentRainMm: 0,
+      rotations: [
+        { year: new Date().getFullYear(), crop, variety: '', area_ha: g.area_ha, color: '#769b56' },
+      ],
+      activities: [],
+    };
+  });
 }
 
-export function ShapefileModal({ isOpen, onClose, onImportField }: ShapefileModalProps) {
-  const [activeTab, setActiveTab] = useState<'recent' | 'browse'>('recent');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFile, setSelectedFile] = useState<string | null>('Field layout-tomato.shp');
-  const [isSuccess, setIsSuccess] = useState(false);
-
+export function ShapefileModal({
+  isOpen = true,
+  onClose,
+  onImport,
+  onImportField,
+  it = false,
+}: {
+  isOpen?: boolean;
+  onClose: () => void;
+  onImport?: (fields: XFarmField[]) => void;
+  onImportField?: (fieldName: string, cropName: string, areaHa: number) => void;
+  it?: boolean;
+}) {
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
   if (!isOpen) return null;
-
-  const mockFiles = [
-    {
-      id: 'shp-1',
-      name: 'Field layout-tomato.shp',
-      date: '26/03/22',
-      source: 'iPhone',
-      crop: 'Tomato (Bio)',
-      area: 5.10,
-    },
-    {
-      id: 'shp-2',
-      name: 'Plot-N2-boundary.shp',
-      date: '14/04/23',
-      source: 'Trimble GPS',
-      crop: 'Maize (corn) WAXY',
-      area: 4.80,
-    },
-    {
-      id: 'shp-3',
-      name: 'Vineyard-Oldofredi-2023.shp',
-      date: '02/09/23',
-      source: 'QGIS Export',
-      crop: 'Vineyard (Nebbiolo)',
-      area: 2.80,
-    },
-    {
-      id: 'shp-4',
-      name: 'Tetto-Patta-Soy.geojson',
-      date: '18/05/23',
-      source: 'Cloud Drive',
-      crop: 'Soybean',
-      area: 3.40,
-    },
-  ];
-
-  const filteredFiles = mockFiles.filter((f) =>
-    f.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleSelectAndImport = (file: typeof mockFiles[0]) => {
-    setSelectedFile(file.name);
-    setIsSuccess(true);
-    setTimeout(() => {
-      onImportField(file.name.replace('.shp', '').replace('.geojson', ''), file.crop, file.area);
-      setIsSuccess(false);
-      onClose();
-    }, 900);
-  };
-
   return (
-    <div className="xfarm-modal-backdrop" onClick={onClose}>
-      <div
-        className="xfarm-shp-modal"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: '380px',
-          maxHeight: '620px',
-          background: '#ffffff',
-          borderRadius: '24px',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '0 25px 60px -15px rgba(0,0,0,0.4)',
-          border: '1px solid #cbd5e1',
-          position: 'relative',
-        }}
-      >
-        {/* iOS TOP STATUS / HEADER */}
-        <div
-          style={{
-            padding: '16px 20px 10px 20px',
-            borderBottom: '1px solid #f1f5f9',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+    <div className="xfarm-modal-backdrop">
+      <section className="parcel-import" role="dialog" aria-label="GIS import">
+        <header>
+          <h2>{it ? 'Importa da file' : 'Import from file'}</h2>
+          <button disabled={busy} onClick={onClose} aria-label="Close">
+            <X size={18} />
+          </button>
+        </header>
+        <p>{it ? 'Esempio locale' : 'Local sample'}</p>
+        <button
+          className="parcel-sample"
+          onClick={() => {
+            const f = XFARM_FIELDS.find((f) => f.id === 'confreria-sud')!;
+            const sampleFields = [
+              {
+                ...f,
+                id: crypto.randomUUID(),
+                name: 'Field layout-tomato',
+                group: 'Conti',
+                activities: [],
+              },
+            ];
+            if (onImport) onImport(sampleFields);
+            if (onImportField) {
+              onImportField('Field layout-tomato', sampleFields[0].currentCrop, sampleFields[0].surface_ha);
+            }
           }}
         >
-          <div style={{ width: '40px' }} />
-          <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#0f172a' }}>
-            {activeTab === 'recent' ? 'Recent' : 'Browse Files'}
-          </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#2563eb' }}
-              title="Toggle Grid View"
-            >
-              <Grid size={18} />
-            </button>
-            <button
-              onClick={onClose}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#2563eb',
-                fontSize: '15px',
-                fontWeight: 600,
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-
-        {/* SEARCH BAR */}
-        <div style={{ padding: '10px 16px 6px 16px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: '#f1f5f9',
-              borderRadius: '10px',
-              padding: '8px 12px',
+          <Layers />
+          Field layout-tomato.shp
+        </button>
+        <label>
+          <FileUp size={17} />
+          {it ? 'Scegli dal dispositivo' : 'Choose from device'}
+          <input
+            type="file"
+            accept=".shp,.zip,.geojson,.json"
+            disabled={busy}
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              e.target.value = '';
+              setBusy(true);
+              setError('');
+              try {
+                const imported = await readParcels(file);
+                if (onImport) onImport(imported);
+                if (onImportField && imported[0]) {
+                  onImportField(imported[0].name, imported[0].currentCrop, imported[0].surface_ha);
+                }
+              } catch (e) {
+                setError((e as Error).message);
+                setBusy(false);
+              }
             }}
-          >
-            <Search size={16} color="#64748b" />
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                outline: 'none',
-                fontSize: '15px',
-                width: '100%',
-                color: '#0f172a',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* NOTIFICATION ON SUCCESS */}
-        {isSuccess && (
-          <div
-            style={{
-              background: '#dcfce7',
-              color: '#15803d',
-              padding: '10px 16px',
-              fontSize: '13px',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Check size={16} />
-            Shapefile imported! Adding parcel to farm map...
-          </div>
-        )}
-
-        {/* FILE LISTING */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
-          {activeTab === 'recent' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>
-                CAD &amp; GIS BOUNDARIES
-              </div>
-
-              {filteredFiles.map((file) => (
-                <div
-                  key={file.id}
-                  onClick={() => handleSelectAndImport(file)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '14px',
-                    padding: '10px 12px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    background: selectedFile === file.name ? '#f8fafc' : 'transparent',
-                    border: selectedFile === file.name ? '1px solid #94a3b8' : '1px solid transparent',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  {/* SHP BADGE ICON (AS IN SCREENSHOT 8) */}
-                  <div
-                    style={{
-                      width: '52px',
-                      height: '62px',
-                      background: '#ffffff',
-                      border: '1px solid #cbd5e1',
-                      borderRadius: '8px',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: '9px',
-                        fontWeight: 800,
-                        color: '#64748b',
-                        letterSpacing: '0.5px',
-                        marginBottom: '3px',
-                      }}
-                    >
-                      SHP
-                    </span>
-                    <Layers size={22} color="#475569" />
-                  </div>
-
-                  {/* FILE DETAILS */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>
-                      {file.name}
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
-                      {file.date} &middot; {file.source}
-                    </div>
-                    <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, marginTop: '2px' }}>
-                      {file.crop} &middot; {file.area} ha
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* UPLOAD CUSTOM FILE DROP AREA */}
-              <div
-                style={{
-                  border: '2px dashed #cbd5e1',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  background: '#f8fafc',
-                  cursor: 'pointer',
-                  marginTop: '8px',
-                }}
-                onClick={() => {
-                  const name = prompt('Enter parcel name to import:', 'Custom Boundary-Plot4.shp');
-                  if (name) {
-                    onImportField(name.replace('.shp', ''), 'Cover Crop (Bio)', 3.2);
-                    onClose();
-                  }
-                }}
-              >
-                <Upload size={22} color="#64748b" style={{ margin: '0 auto 6px auto' }} />
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>
-                  Upload Shapefile (.shp, .zip, .geojson)
-                </div>
-                <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
-                  Drag &amp; drop or click to browse
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div style={{ padding: '20px 0', textAlign: 'center', color: '#64748b' }}>
-              <Folder size={44} color="#94a3b8" style={{ margin: '0 auto 10px auto' }} />
-              <div style={{ fontSize: '14px', fontWeight: 600 }}>iCloud Drive &middot; xFarm Data</div>
-              <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
-                All GIS boundary files synchronized
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* BOTTOM TAB BAR (IOS RECENT / BROWSE) */}
-        <div
-          style={{
-            height: '56px',
-            borderTop: '1px solid #f1f5f9',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            background: '#fafafa',
-          }}
-        >
-          <button
-            onClick={() => setActiveTab('recent')}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2px',
-              color: activeTab === 'recent' ? '#2563eb' : '#94a3b8',
-            }}
-          >
-            <Clock size={20} />
-            <span style={{ fontSize: '10px', fontWeight: 600 }}>Recent</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('browse')}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2px',
-              color: activeTab === 'browse' ? '#2563eb' : '#94a3b8',
-            }}
-          >
-            <Folder size={20} />
-            <span style={{ fontSize: '10px', fontWeight: 600 }}>Browse</span>
-          </button>
-        </div>
-      </div>
+          />
+        </label>
+        <small>GeoJSON · WGS84 SHP · ZIP (SHP + PRJ)</small>
+        {error && <p role="alert">{error}</p>}
+      </section>
     </div>
   );
 }

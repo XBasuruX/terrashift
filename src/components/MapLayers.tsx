@@ -1,6 +1,12 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import type * as Cesium from 'cesium';
+import {
+  BASEMAP_MAX_LEVEL,
+  satelliteProvider,
+  installImageryCoverage,
+  type ImageryCoverage,
+} from '@/lib/mapZoom';
 type Settings = {
   id: number;
   name: string;
@@ -74,17 +80,26 @@ export function MapLayers({
   engine: C,
   open,
   onClose,
+  cap,
+  onCapChange,
+  onZoom,
+  coverage,
+  onCoverage,
 }: {
   viewer: Cesium.Viewer | null;
   engine: typeof Cesium | null;
   open: boolean;
   onClose: () => void;
+  cap: number;
+  onCapChange: (cap: number) => void;
+  onZoom: (height: number) => void;
+  coverage: ImageryCoverage;
+  onCoverage: (coverage: ImageryCoverage) => void;
 }) {
   const [layers, setLayers] = useState(initial),
     [status, setStatus] = useState<Record<number, string>>({}),
     [legend, setLegend] = useState<Record<number, string[]>>({}),
     [quality, setQuality] = useState('balanced'),
-    [cap, setCap] = useState(21),
     [viewScale, setViewScale] = useState('—'),
     [reload, setReload] = useState(0);
   const [baseSource, setBaseSource] = useState('current'),
@@ -100,8 +115,16 @@ export function MapLayers({
   const baseUrl =
     baseSource === 'current'
       ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-      : alternatives.find((a) => a.id === baseSource)?.url;
+      : baseSource === 'clarity'
+        ? 'https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+        : alternatives.find((a) => a.id === baseSource)?.url;
   const revision = useRef(0);
+  const effectiveCap = Math.min(cap, coverage.level ?? cap);
+  useEffect(() => {
+    if (!v || !C || !baseUrl) return;
+    onCoverage({ level: null, latitude: v.camera.positionCartographic.latitude, verified: false });
+    return installImageryCoverage(v, C, baseUrl, cap, onCoverage);
+  }, [v, C, baseUrl, cap, onCoverage]);
   const patch = (id: number, p: Partial<Settings>) =>
     setLayers((old) => old.map((l) => (l.id === id ? { ...l, ...p } : l)));
   useEffect(() => {
@@ -140,7 +163,7 @@ export function MapLayers({
     if (
       old?.imageryProvider instanceof C.UrlTemplateImageryProvider &&
       old.imageryProvider.url === baseUrl &&
-      old.imageryProvider.maximumLevel === cap
+      old.imageryProvider.maximumLevel === effectiveCap
     ) {
       basemap.current = { viewer: v, layer: old };
       return;
@@ -148,17 +171,13 @@ export function MapLayers({
     // Add first so Cesium never traverses a globe with its base layer removed.
     // Track ownership rather than accidentally removing a Sentinel overlay.
     const layer = v.imageryLayers.addImageryProvider(
-      new C.UrlTemplateImageryProvider({
-        url: baseUrl,
-        maximumLevel: cap,
-        credit: 'Esri, Maxar, Earthstar Geographics · source detail and dates vary',
-      }),
+      satelliteProvider(C, baseUrl, effectiveCap),
       0,
     );
     basemap.current = { viewer: v, layer };
     if (old && v.imageryLayers.contains(old)) v.imageryLayers.remove(old);
     v.scene.requestRender();
-  }, [v, C, cap, baseUrl]);
+  }, [v, C, effectiveCap, baseUrl]);
   useEffect(() => {
     if (!v || !C) return;
     const controller = new AbortController();
@@ -285,21 +304,9 @@ export function MapLayers({
   }, [v, C, JSON.stringify(layers.map((l) => l.opacity)), JSON.stringify(status)]);
   function zoom(mpp: number) {
     if (!v || !C) return;
-    const p = v.camera.positionCartographic;
-    v.camera.flyTo({
-      destination: C.Cartesian3.fromRadians(
-        p.longitude,
-        p.latitude,
-        (mpp * v.canvas.clientHeight) / 0.82,
-      ),
-      orientation: { heading: 0, pitch: -Math.PI / 2, roll: 0 },
-      duration: 1,
-    });
+    onZoom((mpp * v.canvas.clientHeight) / 0.82);
   }
-  if (!open)
-    return (
-      <div className="map-scale-readout">View ≈ {viewScale} m/pixel · source resolution varies</div>
-    );
+  if (!open) return null;
   return (
     <aside className="map-layer-panel optimized-layers">
       <div className="layer-panel-title">
@@ -314,6 +321,7 @@ export function MapLayers({
           onChange={(e) => setBaseSource(e.target.value)}
         >
           <option value="current">Esri current mosaic</option>
+          <option value="clarity">Esri Clarity · may be older</option>
           {alternatives.map((a) => (
             <option value={a.id} key={a.id}>
               {a.name}
@@ -342,15 +350,19 @@ export function MapLayers({
         <select
           aria-label="Basemap tile zoom cap"
           value={cap}
-          onChange={(e) => setCap(+e.target.value)}
+          onChange={(e) => onCapChange(+e.target.value)}
         >
-          {[17, 19, 21, 23].map((n) => (
+          {[17, 19, 21, BASEMAP_MAX_LEVEL].map((n) => (
             <option key={n} value={n}>
               Level {n}
             </option>
           ))}
         </select>
       </label>
+      <small>
+        Available detail is checked at the map center. Closer inspection magnifies the last
+        available image up to 4×.
+      </small>
       <div className="map-zoom-presets">
         {[1, 5, 20].map((n) => (
           <button key={n} onClick={() => zoom(n)}>

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import {
-  Search,
+  Search, Menu,
   Bell,
   Sun,
   Globe,
@@ -19,6 +19,7 @@ import {
 export type ViewportMode = 'desktop' | 'tablet' | 'mobile';
 
 interface XFarmHeaderProps {
+  onMenu?: () => void;
   onSearch: (query: string) => void;
   activePilot: string;
   onSelectPilot: (pilot: string) => void;
@@ -31,7 +32,7 @@ interface XFarmHeaderProps {
 }
 
 export function XFarmHeader({
-  onSearch,
+  onMenu, onSearch,
   activePilot,
   onSelectPilot,
   onOpenNotifications,
@@ -56,6 +57,7 @@ export function XFarmHeader({
     <header className="xfarm-header">
       {/* LEFT: LOGO & SEARCH */}
       <div className="xfarm-header-left">
+        <button className="parcel-nav-toggle" title="Farm navigation" onClick={onMenu}><Menu size={20}/></button>
         <div className="xfarm-logo" title="xFarm Agricultural Management Platform">
           <span className="xfarm-logo-chevrons">&gt;&gt;</span>
           <span>XFARM</span>
@@ -78,7 +80,7 @@ export function XFarmHeader({
       </div>
 
       {/* CENTER: DEVICE PREVIEW SWITCHER (DESKTOP, IPAD, IPHONE) */}
-      <div
+      <div className="parcel-devices"
         style={{
           display: 'flex',
           alignItems: 'center',

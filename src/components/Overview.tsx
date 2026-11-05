@@ -19,7 +19,7 @@ import { ClimateChart, SeasonalComparison } from './Charts';
 import { Panel, PageIntro, Stat, fmt, Notice, Busy } from './UI';
 
 export function FarmPicker() {
-  const { farm, updateFarm } = useTerra();
+  const { farm, farms, addFarm, selectFarm, view } = useTerra();
   return (
     <select
       className="farm-picker"
@@ -30,13 +30,22 @@ export function FarmPicker() {
       }
       onChange={(e) => {
         const s = samples.find((x) => x.name === e.target.value);
-        if (s)
-          updateFarm({
-            latitude: s.latitude,
-            longitude: s.longitude,
-            name: `${s.name.split(',')[0]} learning farm`,
-            area_ha: s.area,
-          });
+        if (!s) return;
+        const existing = farms.find(
+          (f) => f.latitude === s.latitude && f.longitude === s.longitude,
+        );
+        if (existing?.id) selectFarm(existing.id);
+        else
+          addFarm(
+            {
+              latitude: s.latitude,
+              longitude: s.longitude,
+              name: `${s.name.split(',')[0]} learning farm`,
+              area_ha: s.area,
+              category: s.label,
+            },
+            view,
+          );
       }}
     >
       {!samples.some((s) => s.latitude === farm.latitude && s.longitude === farm.longitude) && (
@@ -94,6 +103,9 @@ export function Overview() {
         title="Every season starts with understanding."
         description="Explore the signals. Connect the patterns. Plan what comes next."
       >
+        <button className="button secondary" onClick={() => setView('operations')}>
+          Manage fields <ArrowRight size={15} />
+        </button>
         <button className="button primary" onClick={() => setView('rotations')}>
           Explore rotations
           <ArrowUpRight size={16} />
@@ -246,7 +258,7 @@ export function Explorer() {
       <PageIntro
         eyebrow="EARTH EXPLORER"
         title="The big picture. Your place in it."
-        description="Explore Sri Lanka in Cesium. Find a town, enable NSDI reference layers, and draw each farm by placing boundary points."
+        description="Explore satellite imagery worldwide. Find a location, inspect the map scale, and draw farm boundaries. NSDI reference layers cover Sri Lanka."
       >
         <FarmPicker />
       </PageIntro>

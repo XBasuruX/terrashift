@@ -13,3 +13,5 @@ in `blue-marble-receipt.json`; relevant capabilities are archived in
 context with no acquisition date asserted, and does not feed the crop model.
 Esri satellite tiles and NASA GIBS imagery are remote services with attribution
 in the map; they are not bundled or used as scientific model inputs.
+
+The local Cuneo aerial basemap (`cuneo-ortho.webp`) is a cropped WebP mosaic of the Ortofoto 2010 ICE Piemonte service, © Arpa Piemonte, [CC BY 2.5 Italia](https://creativecommons.org/licenses/by/2.5/it/). [Source and reuse information](https://webgis.arpa.piemonte.it/ags/rest/services/topografia_dati_di_base/Ortofoto_2010_ICE_Piemonte/MapServer/info/iteminfo). Parcel outlines and crop records are demonstration data.

@@ -23,6 +23,7 @@ import {
 import type { View, Mode } from '@/lib/types';
 import { useTerra } from '@/lib/store';
 import { Overview, Explorer } from './Overview';
+import { FieldOperations } from './xfarm/XFarmShell';
 import { FarmConfig } from './FarmConfig';
 import { RotationStudio } from './RotationStudio';
 import { ClimateLab } from './ClimateLab';
@@ -37,6 +38,7 @@ const nav: { id: View; name: string; icon: typeof Leaf; number: string }[] = [
   { id: 'climate', name: 'Climate Lab', icon: FlaskConical, number: '05' },
   { id: 'evidence', name: 'Evidence & Sources', icon: LibraryBig, number: '06' },
   { id: 'brief', name: 'Decision Brief', icon: FileText, number: '07' },
+  { id: 'operations', name: 'Field Operations', icon: Leaf, number: '08' },
 ];
 const tourSteps: [View, string, string][] = [
   [
@@ -296,6 +298,8 @@ export function Shell() {
             <Overview />
           ) : view === 'explorer' ? (
             <Explorer />
+          ) : view === 'operations' ? (
+            <FieldOperations />
           ) : view === 'farm' ? (
             <FarmConfig />
           ) : view === 'rotations' ? (
@@ -336,7 +340,9 @@ export function Shell() {
                             ? 'DecisionBrief'
                             : view === 'evidence'
                               ? 'Evidence'
-                              : 'MapExplorer'}
+                              : view === 'operations'
+                                ? 'xfarm/XFarmShell'
+                                : 'MapExplorer'}
                   .tsx
                 </dd>
                 <dt>Data path</dt>

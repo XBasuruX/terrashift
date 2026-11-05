@@ -1,5 +1,5 @@
 export type View =
-  'overview' | 'explorer' | 'farm' | 'rotations' | 'climate' | 'evidence' | 'brief';
+  'overview' | 'explorer' | 'operations' | 'farm' | 'rotations' | 'climate' | 'evidence' | 'brief';
 export type Mode = 'live' | 'cached' | 'simulation';
 export type Priorities = { water: number; diversity: number; suitability: number };
 export type Farm = {

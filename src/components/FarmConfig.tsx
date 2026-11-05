@@ -91,6 +91,9 @@ export function FarmConfig() {
         title="Your land. Your constraints. Your priorities."
         description="Farmer-entered assumptions stay with you across the application and are saved in this browser."
       >
+        <button className="button primary" onClick={() => setView('operations')}>
+          Open field operations
+        </button>
         <button
           className="button secondary"
           onClick={() => {

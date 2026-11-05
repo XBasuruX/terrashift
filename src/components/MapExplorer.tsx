@@ -6,6 +6,17 @@ import { fieldGeometry } from '@/lib/geometry';
 import { samples } from '@/lib/defaults';
 import { MapLayers } from './MapLayers';
 import { installRenderRecovery, type RenderState } from '@/lib/mapRuntime';
+import {
+  BASEMAP_MAX_LEVEL,
+  DETAIL_HEIGHT,
+  WORLD_HEIGHT,
+  imageryZoomMinimum,
+  installZoomLimits,
+  satelliteProvider,
+  setMapHeight,
+  viewMetersPerPixel,
+  type ImageryCoverage,
+} from '@/lib/mapZoom';
 let engine: Promise<typeof Cesium> | null = null;
 function loadEngine() {
   if (!engine)
@@ -31,7 +42,9 @@ export function MapExplorer({
   large = false,
   preview = false,
   imageOverlay,
+  localOnly = false,
 }: {
+  localOnly?: boolean;
   large?: boolean;
   preview?: boolean;
   imageOverlay?: { url: string; bounds: number[] };
@@ -54,29 +67,90 @@ export function MapExplorer({
   const [pickedInfo, setPickedInfo] = useState<Record<string, string> | null>(null);
   const [renderState, setRenderState] = useState<RenderState>('ready');
   const recovery = useRef<ReturnType<typeof installRenderRecovery> | null>(null);
+  const [zoomHeight, setZoomHeight] = useState(1_500_000);
+  const [tileCap, setTileCap] = useState(BASEMAP_MAX_LEVEL);
+  const [coverage, setCoverage] = useState<ImageryCoverage>({
+    level: null,
+    latitude: (farm.latitude * Math.PI) / 180,
+    verified: false,
+  });
+  const [, resizeZoom] = useState(0);
+  const v = ready ? viewer.current : null,
+    C = api.current;
+  const latitude = Math.max(
+    -1.4844,
+    Math.min(1.4844, v?.camera.positionCartographic.latitude ?? coverage.latitude),
+  );
+  const sourceMpp =
+    (156543.033928 * Math.cos(latitude)) / 2 ** Math.min(tileCap, coverage.level ?? tileCap);
+  const minimumHeight = localOnly
+    ? 430_000
+    : v && C
+      ? imageryZoomMinimum(v, C, Math.min(tileCap, coverage.level ?? tileCap), latitude)
+      : DETAIL_HEIGHT;
+  const viewMpp = v && C ? viewMetersPerPixel(v, C) : 1;
+  const zoomLevel = Math.log2((156543.033928 * Math.cos(latitude)) / Math.max(0.0001, viewMpp));
+  const minimumLevel = Math.floor((zoomLevel - Math.log2(WORLD_HEIGHT / zoomHeight)) * 10) / 10;
+  const maximumLevel =
+    Math.ceil((zoomLevel + Math.log2(zoomHeight / minimumHeight)) * 10 - 0.000001) / 10;
+  const atDetailLimit = zoomHeight <= minimumHeight + 0.6;
+  const scaleTarget = viewMpp * 90;
+  const scalePower = 10 ** Math.floor(Math.log10(scaleTarget));
+  const scaleDistance = [5, 2, 1].find((n) => n * scalePower <= scaleTarget)! * scalePower;
+  const distanceLabel = (meters: number) =>
+    meters >= 1000
+      ? `${(meters / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} km`
+      : `${meters.toLocaleString(undefined, { maximumFractionDigits: meters < 1 ? 2 : 0 })} m`;
+  useEffect(() => {
+    if (!ready || !viewer.current) return;
+    const map = viewer.current;
+    const refresh = () => resizeZoom((n) => n + 1);
+    const resize = new ResizeObserver(refresh);
+    resize.observe(map.canvas);
+    const remove = map.scene.morphComplete.addEventListener(refresh);
+    return () => {
+      resize.disconnect();
+      remove();
+    };
+  }, [ready]);
+  useEffect(() => {
+    if (!ready || !viewer.current || !api.current) return;
+    return installZoomLimits(viewer.current, api.current, minimumHeight, setZoomHeight);
+  }, [ready, minimumHeight]);
+  function zoomTo(height: number) {
+    if (viewer.current && api.current) setMapHeight(viewer.current, api.current, height);
+  }
+  function zoomToLevel(level: number) {
+    zoomTo(zoomHeight * 2 ** (zoomLevel - level));
+  }
   useEffect(() => {
     const v = viewer.current,
       C = api.current;
-    if (!ready || !v || !C || !imageOverlay) return;
+    const overlay = localOnly
+      ? { url: '/data/sri-lanka-blue-marble.jpg', bounds: [79, 6, 82, 10] }
+      : imageOverlay;
+    if (!ready || !v || !C || !overlay) return;
     let disposed = false;
     let layer: Cesium.ImageryLayer | undefined;
-    C.SingleTileImageryProvider.fromUrl(imageOverlay.url, {
-      rectangle: C.Rectangle.fromDegrees(
-        ...(imageOverlay.bounds as [number, number, number, number]),
-      ),
-      credit: 'Copernicus Sentinel-2 / Earth Search · acquisition selected below',
+    C.SingleTileImageryProvider.fromUrl(overlay.url, {
+      rectangle: C.Rectangle.fromDegrees(...(overlay.bounds as [number, number, number, number])),
+      credit: localOnly
+        ? 'NASA GIBS Blue Marble'
+        : 'Copernicus Sentinel-2 / Earth Search · acquisition selected below',
     })
       .then((p) => {
         if (disposed) return;
         layer = v.imageryLayers.addImageryProvider(p);
         v.scene.requestRender();
       })
-      .catch(() => setError('Sentinel crop unavailable; Esri context remains visible.'));
+      .catch(() => {
+        if (!disposed) setError('Regional imagery could not be loaded.');
+      });
     return () => {
       disposed = true;
       if (layer && !v.isDestroyed()) v.imageryLayers.remove(layer);
     };
-  }, [ready, imageOverlay?.url]);
+  }, [ready, localOnly, imageOverlay?.url]);
   useEffect(() => {
     let disposed = false;
     loadEngine()
@@ -103,11 +177,18 @@ export function MapExplorer({
           viewer.current = v;
           recovery.current = installRenderRecovery(v, C, setRenderState);
           v.imageryLayers.addImageryProvider(
-            new C.UrlTemplateImageryProvider({
-              url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-              credit: 'Esri, Maxar, Earthstar Geographics · dates vary',
-              maximumLevel: 21,
-            }),
+            localOnly
+              ? new C.UrlTemplateImageryProvider({
+                  url: '/vendor/cesium/Assets/Textures/NaturalEarthII/{z}/{x}/{reverseY}.jpg',
+                  tilingScheme: new C.GeographicTilingScheme(),
+                  maximumLevel: 2,
+                  credit: 'Natural Earth II',
+                })
+              : satelliteProvider(
+                  C,
+                  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                  BASEMAP_MAX_LEVEL,
+                ),
           );
           v.scene.globe.baseColor = C.Color.fromCssColorString('#344e3b');
           v.screenSpaceEventHandler.removeInputAction(C.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
@@ -264,7 +345,7 @@ export function MapExplorer({
         destination: C.Cartesian3.fromDegrees(
           farm.longitude,
           farm.latitude,
-          preview ? 1800 : 14000,
+          preview ? 1800 : localOnly ? 430000 : 14000,
         ),
         duration: 1.5,
       });
@@ -286,7 +367,7 @@ export function MapExplorer({
     const sample = samples.find((s) => s.name.toLowerCase().includes(search.toLowerCase()));
     let lat = sample?.latitude,
       lon = sample?.longitude;
-    if (!sample)
+    if (!sample && !localOnly)
       try {
         const r = await fetch(
           `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(search)}&count=1`,
@@ -296,7 +377,7 @@ export function MapExplorer({
         lon = d.results?.[0]?.longitude;
       } catch {}
     if (lat == null || lon == null) {
-      setError('Location not found. Try a Sri Lankan city.');
+      setError('Location not found. Try a city or town name, including its country.');
       return;
     }
     const C = api.current;
@@ -307,6 +388,8 @@ export function MapExplorer({
       className={`map-card cesium-map ${large ? 'large' : ''} ${preview ? 'farm-isolated' : ''}`}
       data-map-ready={ready}
       data-map-render-state={renderState}
+      data-map-height={Math.round(zoomHeight)}
+      data-map-min-height={minimumHeight}
     >
       <div ref={host} className="map-surface" />
       {!preview && (
@@ -314,14 +397,14 @@ export function MapExplorer({
           <form className="map-search" onSubmit={find}>
             <input
               aria-label="Search geographic location"
-              placeholder="Find a Sri Lankan town"
+              placeholder="Find a city or town worldwide"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <button>Find</button>
           </form>
           <button className="map-pill" onClick={() => setShowLayers(!showLayers)}>
-            Map detail & layers
+            {localOnly ? 'Local imagery' : 'Map detail & layers'}
           </button>
           <button
             className="map-pill"
@@ -336,12 +419,92 @@ export function MapExplorer({
           </button>
         </div>
       )}
-      <MapLayers
-        viewer={ready ? viewer.current : null}
-        engine={api.current}
-        open={showLayers}
-        onClose={() => setShowLayers(false)}
-      />
+      {localOnly ? (
+        showLayers && (
+          <aside className="map-layer-panel">
+            <strong>Local imagery</strong>
+            <p>Natural Earth II · global basemap</p>
+            <p>NASA Blue Marble · Sri Lanka</p>
+            <button onClick={() => setShowLayers(false)}>Close</button>
+          </aside>
+        )
+      ) : (
+        <MapLayers
+          viewer={ready ? viewer.current : null}
+          engine={api.current}
+          open={showLayers}
+          onClose={() => setShowLayers(false)}
+          cap={tileCap}
+          onCapChange={setTileCap}
+          onZoom={zoomTo}
+          coverage={coverage}
+          onCoverage={setCoverage}
+        />
+      )}
+      {ready && (
+        <div className="map-zoom-control" role="group" aria-label="Map zoom controls">
+          <div className="map-zoom-heading">
+            <strong>Zoom {zoomLevel.toFixed(1)}</strong>
+            <span>Max {maximumLevel.toFixed(1)}</span>
+          </div>
+          <div className="map-zoom-slider">
+            <button
+              aria-label="Zoom out one stage"
+              disabled={zoomHeight >= WORLD_HEIGHT - 2}
+              onClick={() => zoomToLevel(Math.floor(zoomLevel - 0.05))}
+            >
+              −
+            </button>
+            <input
+              type="range"
+              aria-label="Map zoom level"
+              min={minimumLevel}
+              max={maximumLevel}
+              step={0.1}
+              value={Number(zoomLevel.toFixed(1))}
+              aria-valuetext={`Zoom ${zoomLevel.toFixed(1)} of ${maximumLevel.toFixed(1)}`}
+              onChange={(e) => zoomToLevel(Number(e.target.value))}
+            />
+            <button
+              aria-label="Zoom in one stage"
+              disabled={atDetailLimit}
+              onClick={() => zoomToLevel(Math.ceil(zoomLevel + 0.05))}
+            >
+              +
+            </button>
+          </div>
+          <dl className="map-zoom-facts">
+            <div>
+              <dt>View scale ≈</dt>
+              <dd>{viewMpp.toLocaleString(undefined, { maximumFractionDigits: 2 })} m / pixel</dd>
+            </div>
+            <div>
+              <dt>Camera height</dt>
+              <dd>{distanceLabel(zoomHeight)}</dd>
+            </div>
+            <div>
+              <dt>Available tiles</dt>
+              <dd>{coverage.verified ? `Level ${coverage.level}` : 'Not verified'}</dd>
+            </div>
+            {coverage.verified && (
+              <div>
+                <dt>Tile pixel size</dt>
+                <dd>≈ {sourceMpp.toFixed(2)} m</dd>
+              </div>
+            )}
+          </dl>
+          <div className="map-distance-scale">
+            <span style={{ width: `${scaleDistance / viewMpp}px` }} />
+            {distanceLabel(scaleDistance)}
+          </div>
+          <small>
+            {atDetailLimit ? 'Maximum zoom reached' : 'Scroll to zoom · + / − for whole levels'}
+          </small>
+          {coverage.verified && sourceMpp > viewMpp * 1.05 && (
+            <small>Image magnified {(sourceMpp / viewMpp).toFixed(1)}× · no added detail</small>
+          )}
+        </div>
+      )}
       {pickedInfo && (
         <div className="map-feature-info">
           <button onClick={() => setPickedInfo(null)}>Close ×</button>
@@ -378,7 +541,7 @@ export function MapExplorer({
         <div className="map-top">
           <span className="map-pill">Isolated field · {farm.area_ha} ha</span>
           <button className="map-pill" onClick={() => setShowLayers(!showLayers)}>
-            Map detail & layers
+            {localOnly ? 'Local imagery' : 'Map detail & layers'}
           </button>
           <button
             className="map-pill"
@@ -423,8 +586,10 @@ export function MapExplorer({
       )}
       <div className="map-bottom">
         <span>
-          {farm.latitude.toFixed(4)}°, {farm.longitude.toFixed(4)}° · CesiumJS · Esri visual imagery
-          · acquisition dates vary
+          {farm.latitude.toFixed(4)}°, {farm.longitude.toFixed(4)}° · CesiumJS ·{' '}
+          {localOnly
+            ? 'Natural Earth II / NASA Blue Marble'
+            : 'Esri visual imagery · acquisition dates vary'}
         </span>
       </div>
     </div>

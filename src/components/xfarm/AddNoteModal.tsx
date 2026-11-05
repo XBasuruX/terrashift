@@ -1,18 +1,19 @@
 'use client';
 import { useState } from 'react';
 import { Check, X, Camera, MapPin, AlertCircle } from 'lucide-react';
-import { XFARM_FIELDS, type ScoutingNote } from './xfarmData';
+import { type XFarmField, type ScoutingNote } from './xfarmData';
 
 interface AddNoteModalProps {
   isOpen: boolean;
+  fields: XFarmField[];
   onClose: () => void;
   onAddNote: (note: ScoutingNote) => void;
 }
 
-export function AddNoteModal({ isOpen, onClose, onAddNote }: AddNoteModalProps) {
+export function AddNoteModal({ isOpen, fields, onClose, onAddNote }: AddNoteModalProps) {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<ScoutingNote['category']>('General');
-  const [fieldName, setFieldName] = useState(XFARM_FIELDS[0].name);
+  const [fieldName, setFieldName] = useState(fields[0].name);
   const [description, setDescription] = useState('');
 
   if (!isOpen) return null;
@@ -37,10 +38,10 @@ export function AddNoteModal({ isOpen, onClose, onAddNote }: AddNoteModalProps) 
       category,
       categoryColor: categoryColorMap[category],
       date: new Date().toLocaleDateString('en-GB'),
-      author: 'Mario Rossi',
+      author: 'Local user',
       fieldName,
-      lat: 44.388,
-      lng: 7.545,
+      lat: (fields.find(f=>f.name===fieldName) ?? fields[0]).center[0],
+      lng: (fields.find(f=>f.name===fieldName) ?? fields[0]).center[1],
       description: description.trim() || 'Observed during field scouting round.',
     };
 
@@ -152,7 +153,7 @@ export function AddNoteModal({ isOpen, onClose, onAddNote }: AddNoteModalProps) 
                 background: '#ffffff',
               }}
             >
-              {XFARM_FIELDS.map((f) => (
+              {fields.map((f) => (
                 <option key={f.id} value={f.name}>
                   {f.name} ({f.currentCrop})
                 </option>

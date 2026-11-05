@@ -120,7 +120,7 @@ function useTerraState() {
       setCustomAnalysis(null);
     }
   };
-  const addFarm = (patch: Partial<Farm>) => {
+  const addFarm = (patch: Partial<Farm>, destination: View = 'farm') => {
     const next = {
       ...structuredClone(defaultFarm),
       id: crypto.randomUUID(),
@@ -130,7 +130,7 @@ function useTerraState() {
     };
     setSavedFarms([...farms, next]);
     setFarm(next);
-    setView('farm');
+    setView(destination);
   };
   const query = useMemo(
     () => ({ latitude: farm.latitude, longitude: farm.longitude, start, end, mode }),

@@ -1,6 +1,9 @@
 .cesium-map .map-surface:after {
   display: none;
 }
+.cesium-map:not(.large):not(.farm-isolated) {
+  min-height: 480px;
+}
 .cesium-map .map-top {
   right: 90px;
   flex-wrap: wrap;
@@ -95,6 +98,103 @@
 }
 .cesium-widget-credits {
   font-size: 9px !important;
+}
+.map-zoom-control {
+  position: absolute;
+  right: 12px;
+  bottom: 65px;
+  z-index: 3;
+  width: 238px;
+  padding: 12px 14px;
+  border: 1px solid #d6dfcc;
+  border-radius: 12px;
+  background: #f8fbf2f5;
+  color: #243d2f;
+  box-shadow: 0 4px 18px #14291d24;
+}
+.map-zoom-heading,
+.map-zoom-slider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.map-zoom-heading {
+  font-size: 12px;
+}
+.map-zoom-heading span {
+  color: #64765d;
+  font-size: 10px;
+}
+.map-zoom-slider {
+  margin: 8px 0;
+}
+.map-zoom-slider input {
+  min-width: 0;
+  width: 100%;
+  accent-color: #557a53;
+  cursor: pointer;
+}
+.map-zoom-slider button {
+  flex: 0 0 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: #e5eddb;
+  font-size: 20px;
+  line-height: 1;
+}
+.map-zoom-slider button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.map-zoom-control small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.map-zoom-facts {
+  margin: 8px 0 10px;
+  padding-top: 8px;
+  border-top: 1px solid #d6dfcc;
+  display: grid;
+  gap: 6px;
+  font-size: 10px;
+}
+.map-zoom-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+.map-zoom-facts dt {
+  color: #64765d;
+}
+.map-zoom-facts dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.map-distance-scale {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 10px;
+  margin: 10px 0;
+}
+.map-distance-scale > span {
+  display: block;
+  height: 7px;
+  border: 1px solid #243d2f;
+  border-top: 0;
+}
+@media (max-width: 600px) {
+  .map-zoom-control {
+    width: 200px;
+    padding: 10px;
+    bottom: 65px;
+  }
+}
+.map-zoom-slider :focus-visible {
+  outline: 2px solid #557a53;
+  outline-offset: 3px;
 }
 .optimized-layers {
   width: 340px !important;

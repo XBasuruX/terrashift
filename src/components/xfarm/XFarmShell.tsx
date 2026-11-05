@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import './xfarm.css';
+import './parcels.css';
 import { XFarmHeader, type ViewportMode } from './XFarmHeader';
 import { XFarmSidebar, type XFarmTab } from './XFarmSidebar';
 import { XFarmMap } from './XFarmMap';
@@ -27,13 +28,16 @@ import { ClimateLab } from '../ClimateLab';
 import { Evidence } from '../Evidence';
 import { DecisionBrief } from '../DecisionBrief';
 import { MapExplorer } from '../MapExplorer';
+import { Shell } from '../Shell';
+import { useTerra } from '@/lib/store';
 
 export function XFarmShell() {
   const [activeTab, setActiveTab] = useState<XFarmTab>('map');
   const [activePilot, setActivePilot] = useState<string>('Cuneo / Piedmont Farm');
-  const [activeLayer, setActiveLayer] = useState<'satellite' | 'ndvi' | 'topo' | 'soil'>('satellite');
+  const [activeLayer, setActiveLayer] = useState<'satellite' | 'regional' | 'plot-n2' | 'ortho' | 'ndvi'>('satellite');
   const [lang, setLang] = useState<'EN' | 'IT'>('EN');
   const [viewportMode, setViewportMode] = useState<ViewportMode>('desktop');
+  const [showTerraShiftSuite, setShowTerraShiftSuite] = useState(false);
 
   // DYNAMIC DATA STATE
   const [fields, setFields] = useState<XFarmField[]>(XFARM_FIELDS);
@@ -43,13 +47,13 @@ export function XFarmShell() {
   // INTERACTIVE OVERLAYS & DRAWERS
   const [isFleetOpen, setIsFleetOpen] = useState(false);
   const [selectedMachine, setSelectedMachine] = useState<XFarmMachinery | null>(null);
-  const [selectedField, setSelectedField] = useState<XFarmField | null>(XFARM_FIELDS[0]);
+  const [selectedField, setSelectedField] = useState<XFarmField | null>(null);
   const [selectedProbe, setSelectedProbe] = useState<SoilMoistureProbe | null>(null);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isScoutingOpen, setIsScoutingOpen] = useState(false);
   const [is3DMode, setIs3DMode] = useState(false);
 
-  // NEW MODALS
+  // MODALS
   const [isShapefileOpen, setIsShapefileOpen] = useState(false);
   const [isAddNoteOpen, setIsAddNoteOpen] = useState(false);
   const [isAddActivityOpen, setIsAddActivityOpen] = useState(false);
@@ -142,6 +146,34 @@ export function XFarmShell() {
       })
     );
   };
+
+  // TOGGLE TO FULL TERRASHIFT NASA SUITE
+  if (showTerraShiftSuite) {
+    return (
+      <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
+        <button
+          onClick={() => setShowTerraShiftSuite(false)}
+          style={{
+            position: 'absolute',
+            top: '12px',
+            right: '24px',
+            zIndex: 9999,
+            background: 'var(--xfarm-green)',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '6px',
+            padding: '8px 16px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+          }}
+        >
+          ← Return to xFarm Platform
+        </button>
+        <Shell />
+      </div>
+    );
+  }
 
   // INNER APPLICATION CONTENT
   const renderAppContent = () => (
@@ -257,7 +289,7 @@ export function XFarmShell() {
                   cursor: 'pointer',
                 }}
               >
-                Return to 2D Parcels
+                Return to 2D High-Res Parcels
               </button>
             </div>
             <MapExplorer large />
@@ -426,6 +458,7 @@ export function XFarmShell() {
         {/* SCOUTING NOTES VIEW */}
         <ScoutingNotes
           isOpen={isScoutingOpen}
+          notes={notes}
           onClose={() => setIsScoutingOpen(false)}
           onSelectNote={(note) => {
             setIsScoutingOpen(false);
@@ -455,6 +488,7 @@ export function XFarmShell() {
         {/* ADD NOTE MODAL (SCREENSHOT 5) */}
         <AddNoteModal
           isOpen={isAddNoteOpen}
+          fields={fields}
           onClose={() => setIsAddNoteOpen(false)}
           onAddNote={handleAddNote}
         />
@@ -496,4 +530,9 @@ export function XFarmShell() {
   }
 
   return <div className="xfarm-shell">{renderAppContent()}</div>;
+}
+
+// Export FieldOperations for Shell.tsx backward compatibility
+export function FieldOperations() {
+  return <XFarmShell />;
 }

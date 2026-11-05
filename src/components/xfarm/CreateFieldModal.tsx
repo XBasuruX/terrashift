@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { ArrowLeft, Search, Check, X, Sprout } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { CROP_LEGEND } from './xfarmData';
 
 interface CreateFieldModalProps {
@@ -8,6 +8,7 @@ interface CreateFieldModalProps {
   onClose: () => void;
   calculatedAreaHa: number;
   vertexCount: number;
+  groups: string[];
   onSaveField: (fieldData: {
     name: string;
     crop: string;
@@ -22,25 +23,25 @@ export function CreateFieldModal({
   isOpen,
   onClose,
   calculatedAreaHa,
-  vertexCount,
+  vertexCount, groups,
   onSaveField,
 }: CreateFieldModalProps) {
-  const [step, setStep] = useState<'drawing' | 'details'>('details');
   const [fieldName, setFieldName] = useState('New Field Parcel');
-  const [selectedCrop, setSelectedCrop] = useState('Maize (corn)');
+  const [selectedCrop, setSelectedCrop] = useState(CROP_LEGEND[0].name);
   const [variety, setVariety] = useState('Pioneer P0937');
-  const [group, setGroup] = useState('NORTH');
+  const [group, setGroup] = useState(groups[0] ?? 'Conti');
   const [farmingType, setFarmingType] = useState<'Integrated' | 'Bio' | 'Conventional'>('Bio');
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!fieldName.trim()) return;
     onSaveField({
       name: fieldName,
       crop: selectedCrop,
       variety,
-      area: calculatedAreaHa > 0 ? calculatedAreaHa : 4.61,
+      area: calculatedAreaHa,
       group,
       farmingType,
     });
@@ -81,9 +82,7 @@ export function CreateFieldModal({
             </button>
             <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700 }}>Create Field</h3>
           </div>
-          <button style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer' }}>
-            <Search size={18} />
-          </button>
+
         </div>
 
         {/* DETAILS FORM */}
@@ -111,7 +110,7 @@ export function CreateFieldModal({
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '20px', fontWeight: 800, color: '#15803d' }}>
-                {(calculatedAreaHa > 0 ? calculatedAreaHa : 4.61).toFixed(2)} ha
+                {calculatedAreaHa.toFixed(2)} ha
               </div>
               <div style={{ fontSize: '10px', color: '#166534' }}>Total Area</div>
             </div>
@@ -156,10 +155,7 @@ export function CreateFieldModal({
                   background: '#ffffff',
                 }}
               >
-                <option value="NORTH">NORTH</option>
-                <option value="Conti">Conti</option>
-                <option value="SOUTH">SOUTH</option>
-                <option value="EAST">EAST</option>
+                {groups.map(g => <option key={g}>{g}</option>)}
               </select>
             </div>
 
@@ -189,7 +185,7 @@ export function CreateFieldModal({
 
           <div style={{ marginBottom: '14px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              Crop Selection (2024 Season)
+              Crop Selection
             </label>
             <select
               value={selectedCrop}

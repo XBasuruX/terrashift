@@ -11,15 +11,16 @@ import {
   Layers,
   ChevronRight,
 } from 'lucide-react';
-import { XFARM_SCOUTING_NOTES, type ScoutingNote } from './xfarmData';
+import { type ScoutingNote } from './xfarmData';
 
 interface ScoutingNotesProps {
   isOpen: boolean;
+  notes: ScoutingNote[];
   onClose: () => void;
   onSelectNote: (note: ScoutingNote) => void;
 }
 
-export function ScoutingNotes({ isOpen, onClose, onSelectNote }: ScoutingNotesProps) {
+export function ScoutingNotes({ isOpen, notes, onClose, onSelectNote }: ScoutingNotesProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [timeFilter, setTimeFilter] = useState<'All' | '1mo' | '6mo' | '1yr'>('All');
   const [viewMode, setViewMode] = useState<'visual' | 'list'>('visual');
@@ -36,9 +37,13 @@ export function ScoutingNotes({ isOpen, onClose, onSelectNote }: ScoutingNotesPr
     { label: 'Damage', color: '#c084fc' },
   ];
 
-  const filteredNotes = XFARM_SCOUTING_NOTES.filter((n) => {
-    if (activeCategory === 'All') return true;
-    return n.category.toLowerCase() === activeCategory.toLowerCase();
+  const filteredNotes = notes.filter((n) => {
+    if (activeCategory !== 'All' && n.category !== activeCategory) return false;
+    if (timeFilter === 'All') return true;
+    const [day,month,year] = n.date.split('/').map(Number);
+    const since = new Date();
+    since.setMonth(since.getMonth() - ({ '1mo':1, '6mo':6, '1yr':12 }[timeFilter]));
+    return new Date(year,month-1,day) >= since;
   });
 
   return (
@@ -150,7 +155,7 @@ export function ScoutingNotes({ isOpen, onClose, onSelectNote }: ScoutingNotesPr
       </div>
 
       {/* NOTES GRID (VISUAL CARDS) */}
-      <div className="xfarm-notes-grid">
+      <div className={'xfarm-notes-grid '+(viewMode==='list'?'notes-list':'')}>
         {filteredNotes.map((note) => (
           <div key={note.id} className="xfarm-note-card" onClick={() => onSelectNote(note)}>
             {/* THUMBNAIL */}

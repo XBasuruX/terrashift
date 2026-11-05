@@ -3,7 +3,7 @@ export interface XFarmField {
   name: string;
   surface_ha: number;
   group: string;
-  farmingType: 'Integrated' | 'Bio' | 'Conventional';
+  farmingType: 'Integrated' | 'Bio' | 'Conventional' | 'Unspecified';
   currentCrop: string;
   currentVariety: string;
   cropColor: string;
@@ -25,7 +25,7 @@ export interface XFarmField {
     date: string;
     status: 'Done' | 'Expired' | 'Planned';
   }[];
-  recentRainMm: number;
+  recentRainMm: number | null;
 }
 
 export interface XFarmMachinery {

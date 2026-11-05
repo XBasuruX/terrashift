@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Ruler,
   Layers,
@@ -9,21 +9,16 @@ import {
   VolumeX,
   ChevronDown,
   ChevronUp,
-  Droplets,
-  Tractor,
-  AlertTriangle,
-  CloudRain,
-  Sun,
-  Maximize2,
-  MapPin,
-  Sparkles,
   Plus,
+  Minus,
   PenTool,
   Upload,
   Camera,
   FileText,
   Check,
   X,
+  Maximize2,
+  RotateCcw,
 } from 'lucide-react';
 import {
   CROP_DISTRIBUTION,
@@ -34,51 +29,70 @@ import {
 import { RulerTool } from './RulerTool';
 import { CreateFieldModal } from './CreateFieldModal';
 
+export type MapImageryLayer = 'satellite' | 'regional' | 'plot-n2' | 'ortho' | 'ndvi';
+
 interface XFarmMapProps {
   fields: XFarmField[];
   selectedField: XFarmField | null;
   onSelectField: (field: XFarmField) => void;
   onSelectProbe: (probe: SoilMoistureProbe) => void;
-  activeLayer: 'satellite' | 'ndvi' | 'topo' | 'soil';
-  onChangeLayer: (layer: 'satellite' | 'ndvi' | 'topo' | 'soil') => void;
-  onToggle3D: () => void;
-  is3DMode: boolean;
-  onOpenScouting: () => void;
-  onOpenShapefile: () => void;
-  onOpenAddNote: () => void;
-  onOpenAddActivity: () => void;
-  onAddField: (field: XFarmField) => void;
-  probes: SoilMoistureProbe[];
-  lang: 'EN' | 'IT';
+  activeLayer?: MapImageryLayer;
+  onChangeLayer?: (layer: MapImageryLayer) => void;
+  onToggle3D?: () => void;
+  is3DMode?: boolean;
+  onOpenScouting?: () => void;
+  onOpenShapefile?: () => void;
+  onOpenAddNote?: () => void;
+  onOpenAddActivity?: () => void;
+  onAddField?: (field: XFarmField) => void;
+  probes?: SoilMoistureProbe[];
+  lang?: 'EN' | 'IT';
+  initialMode?: 'browse' | 'draw' | 'measure';
+  onBack?: () => void;
 }
 
 export function XFarmMap({
-  fields,
-  selectedField,
-  onSelectField,
-  onSelectProbe,
-  activeLayer,
-  onChangeLayer,
-  onToggle3D,
-  is3DMode,
-  onOpenScouting,
-  onOpenShapefile,
-  onOpenAddNote,
-  onOpenAddActivity,
-  onAddField,
-  probes,
-  lang,
+  fields = [],
+  selectedField = null,
+  onSelectField = () => {},
+  onSelectProbe = () => {},
+  activeLayer: externalLayer,
+  onChangeLayer: externalSetLayer,
+  onToggle3D = () => {},
+  is3DMode = false,
+  onOpenScouting = () => {},
+  onOpenShapefile = () => {},
+  onOpenAddNote = () => {},
+  onOpenAddActivity = () => {},
+  onAddField = () => {},
+  probes = [],
+  lang = 'EN',
+  initialMode = 'browse',
+  onBack,
 }: XFarmMapProps) {
+  const [internalLayer, setInternalLayer] = useState<MapImageryLayer>('satellite');
+  const activeLayer = externalLayer || internalLayer;
+  const setLayer = (l: MapImageryLayer) => {
+    if (externalSetLayer) externalSetLayer(l);
+    else setInternalLayer(l);
+  };
+
   const [showLegend, setShowLegend] = useState(true);
   const [showLayerMenu, setShowLayerMenu] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  // ZOOM & PAN STATE
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+
   // RULER / MEASUREMENT STATE
-  const [isRulerActive, setIsRulerActive] = useState(false);
+  const [isRulerActive, setIsRulerActive] = useState(initialMode === 'measure');
   const [rulerPoints, setRulerPoints] = useState<[number, number][]>([]);
 
   // FIELD CREATION / DRAWING STATE (SCREENSHOT 9)
-  const [isDrawingField, setIsDrawingField] = useState(false);
+  const [isDrawingField, setIsDrawingField] = useState(initialMode === 'draw');
   const [drawVertices, setDrawVertices] = useState<[number, number][]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -90,10 +104,17 @@ export function XFarmMap({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTractorProgress((prev) => (prev >= 0.95 ? 0.05 : prev + 0.01));
-    }, 400);
+      setTractorProgress((prev) => (prev >= 0.95 ? 0.05 : prev + 0.012));
+    }, 350);
     return () => clearInterval(interval);
   }, []);
+
+  // Sync with selected field
+  useEffect(() => {
+    if (selectedField?.id === 'plot-n2') {
+      // Auto highlight Plot N2
+    }
+  }, [selectedField]);
 
   // CALCULATE DISTANCE FOR RULER
   const totalDistance = rulerPoints.length < 2 ? 0 : 201.0;
@@ -101,11 +122,11 @@ export function XFarmMap({
 
   // CALCULATE DRAWN FIELD AREA (POLYGON)
   const calculatedDrawAreaHa =
-    drawVertices.length >= 3
-      ? Number((drawVertices.length * 0.46).toFixed(2))
-      : 4.61;
+    drawVertices.length >= 3 ? Number((drawVertices.length * 0.46).toFixed(2)) : 4.61;
 
+  // MAP CLICK HANDLER
   const handleMapClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (isDragging.current) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 1000;
     const y = ((e.clientY - rect.top) / rect.height) * 700;
@@ -119,6 +140,37 @@ export function XFarmMap({
       setDrawVertices((prev) => [...prev, [x, y]]);
       return;
     }
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (isRulerActive || isDrawingField) return;
+    isDragging.current = true;
+    dragStart.current = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+    setPanOffset({
+      x: e.clientX - dragStart.current.x,
+      y: e.clientY - dragStart.current.y,
+    });
+  };
+
+  const handlePointerUp = () => {
+    isDragging.current = false;
+  };
+
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.25, 2.5));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.25, 0.75));
+  };
+
+  const handleResetView = () => {
+    setZoomLevel(1);
+    setPanOffset({ x: 0, y: 0 });
   };
 
   const handleSaveDrawnField = (fieldData: {
@@ -170,14 +222,44 @@ export function XFarmMap({
       recentRainMm: 63.7,
     };
 
-    onAddField(newField);
+    if (onAddField) onAddField(newField);
     onSelectField(newField);
     setIsDrawingField(false);
     setDrawVertices([]);
   };
 
+  // Determine current high-resolution photographic basemap
+  const getBasemapUrl = () => {
+    switch (activeLayer) {
+      case 'ndvi':
+        return '/images/xfarm-ndvi-hd.jpg';
+      case 'regional':
+        return '/images/xfarm-satellite-regional-hd.jpg';
+      case 'plot-n2':
+        return '/images/xfarm-plot-n2-hd.jpg';
+      case 'ortho':
+        return '/data/cuneo-ortho.webp';
+      case 'satellite':
+      default:
+        return '/images/xfarm-satellite-desktop-hd.jpg';
+    }
+  };
+
   return (
-    <div className="xfarm-map-stage">
+    <div
+      className="xfarm-map-stage"
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        background: '#1a221b',
+      }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+    >
       {/* FLOATING DRAWING BANNER (SCREENSHOT 9) */}
       {isDrawingField && (
         <div className="xfarm-drawing-banner">
@@ -185,7 +267,7 @@ export function XFarmMap({
           <span style={{ fontSize: '13px', fontWeight: 600 }}>
             {lang === 'IT' ? 'Modalità Creazione Campo' : 'Create Field Mode'}:{' '}
             <strong style={{ color: '#a3e635' }}>{drawVertices.length}</strong>{' '}
-            {lang === 'IT' ? 'punti tracciati' : 'vertices added'}
+            {lang === 'IT' ? 'punti tracciati' : 'vertices placed'}
           </span>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button
@@ -209,7 +291,6 @@ export function XFarmMap({
             <button
               onClick={() => {
                 if (drawVertices.length < 3) {
-                  // preset default vertices if clicked directly
                   setDrawVertices([
                     [310, 180],
                     [350, 220],
@@ -239,6 +320,76 @@ export function XFarmMap({
           </div>
         </div>
       )}
+
+      {/* FLOATING ZOOM / RESET CONTROLS (LEFT-TOP) */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '16px',
+          left: '16px',
+          zIndex: 45,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          background: 'rgba(22, 28, 24, 0.92)',
+          backdropFilter: 'blur(8px)',
+          borderRadius: '8px',
+          padding: '4px',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+        }}
+      >
+        <button
+          onClick={handleZoomIn}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#ffffff',
+            padding: '6px',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          title="Zoom in"
+        >
+          <Plus size={16} />
+        </button>
+        <button
+          onClick={handleZoomOut}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#ffffff',
+            padding: '6px',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          title="Zoom out"
+        >
+          <Minus size={16} />
+        </button>
+        <button
+          onClick={handleResetView}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#a3e635',
+            padding: '6px',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          title="Reset zoom & pan"
+        >
+          <RotateCcw size={15} />
+        </button>
+      </div>
 
       {/* FLOATING TOP-RIGHT CONTROLS */}
       <div className="xfarm-floating-tools">
@@ -279,11 +430,12 @@ export function XFarmMap({
           <PenTool size={19} />
         </button>
 
+        {/* MAP IMAGERY LAYER SELECTOR */}
         <div style={{ position: 'relative' }}>
           <button
             className={`xfarm-tool-btn ${showLayerMenu ? 'active' : ''}`}
             onClick={() => setShowLayerMenu(!showLayerMenu)}
-            title="Map Imagery & Agro Layers"
+            title="Satellite & Agro Layers"
           >
             <Layers size={19} />
           </button>
@@ -297,26 +449,29 @@ export function XFarmMap({
                 marginTop: '6px',
                 background: '#ffffff',
                 borderRadius: '8px',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.25)',
                 padding: '8px',
-                minWidth: '180px',
+                minWidth: '220px',
                 zIndex: 100,
                 border: '1px solid #cbd5e1',
               }}
             >
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', padding: '4px 8px' }}>
-                MAP LAYERS
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', padding: '4px 8px', letterSpacing: '0.4px' }}>
+                HIGH-RESOLUTION SATELLITE
               </div>
+
               <button
                 onClick={() => {
-                  onChangeLayer('satellite');
+                  setLayer('satellite');
                   setShowLayerMenu(false);
                 }}
                 style={{
-                  display: 'block',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                   width: '100%',
                   textAlign: 'left',
-                  padding: '6px 8px',
+                  padding: '7px 8px',
                   borderRadius: '4px',
                   border: 'none',
                   background: activeLayer === 'satellite' ? '#dcfce7' : 'transparent',
@@ -326,18 +481,97 @@ export function XFarmMap({
                   cursor: 'pointer',
                 }}
               >
-                🛰️ High-Res Satellite
+                <span>🛰️</span>
+                <span>Original xFarm Satellite (HD)</span>
               </button>
+
               <button
                 onClick={() => {
-                  onChangeLayer('ndvi');
+                  setLayer('regional');
                   setShowLayerMenu(false);
                 }}
                 style={{
-                  display: 'block',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                   width: '100%',
                   textAlign: 'left',
-                  padding: '6px 8px',
+                  padding: '7px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: activeLayer === 'regional' ? '#dcfce7' : 'transparent',
+                  color: activeLayer === 'regional' ? '#15803d' : '#1e293b',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                <span>🗺️</span>
+                <span>Regional Farm Mosaic (Cuneo)</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setLayer('plot-n2');
+                  setShowLayerMenu(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '7px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: activeLayer === 'plot-n2' ? '#dcfce7' : 'transparent',
+                  color: activeLayer === 'plot-n2' ? '#15803d' : '#1e293b',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                <span>🔍</span>
+                <span>Plot N2 Close-Up Aerial</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setLayer('ortho');
+                  setShowLayerMenu(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '7px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: activeLayer === 'ortho' ? '#dcfce7' : 'transparent',
+                  color: activeLayer === 'ortho' ? '#15803d' : '#1e293b',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                <span>🌍</span>
+                <span>Arpa Orthophoto 3.5K</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setLayer('ndvi');
+                  setShowLayerMenu(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '7px 8px',
                   borderRadius: '4px',
                   border: 'none',
                   background: activeLayer === 'ndvi' ? '#dcfce7' : 'transparent',
@@ -347,28 +581,8 @@ export function XFarmMap({
                   cursor: 'pointer',
                 }}
               >
-                🌱 Sentinel NDVI Heatmap
-              </button>
-              <button
-                onClick={() => {
-                  onChangeLayer('soil');
-                  setShowLayerMenu(false);
-                }}
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  textAlign: 'left',
-                  padding: '6px 8px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  background: activeLayer === 'soil' ? '#dcfce7' : 'transparent',
-                  color: activeLayer === 'soil' ? '#15803d' : '#1e293b',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                🌍 Regional Soil Classification
+                <span>🌱</span>
+                <span>Sentinel NDVI False-Color</span>
               </button>
             </div>
           )}
@@ -378,6 +592,7 @@ export function XFarmMap({
           className="xfarm-tool-btn"
           onClick={() => {
             if (fields.length > 0) onSelectField(fields[0]);
+            handleResetView();
           }}
           title="Center on Farm"
         >
@@ -415,31 +630,37 @@ export function XFarmMap({
       {/* SVG INTERACTIVE SATELLITE FARM MAP */}
       <svg
         viewBox="0 0 1000 700"
+        preserveAspectRatio="xMidYMid slice"
         style={{
           width: '100%',
           height: '100%',
-          cursor: isRulerActive || isDrawingField ? 'crosshair' : 'default',
+          cursor: isRulerActive || isDrawingField ? 'crosshair' : isDragging.current ? 'grabbing' : 'grab',
+          transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
+          transformOrigin: '50% 50%',
+          transition: isDragging.current ? 'none' : 'transform 0.15s ease-out',
         }}
         onClick={handleMapClick}
       >
         <defs>
-          {/* HIGH-RES FIELD TEXTURE PATTERN */}
-          <pattern id="sat-ground" width="1000" height="700" patternUnits="userSpaceOnUse">
-            <rect width="1000" height="700" fill="#2d372d" />
-            <path d="M 0,480 L 1000,530" stroke="#878377" strokeWidth="18" fill="none" opacity="0.65" />
-            <path d="M 390,0 L 380,700" stroke="#78756c" strokeWidth="16" fill="none" opacity="0.75" />
-            <path d="M 120,490 L 190,700" stroke="#716e66" strokeWidth="12" fill="none" opacity="0.6" />
-            <path d="M 0,220 L 380,240" stroke="#5f5c56" strokeWidth="8" fill="none" opacity="0.5" />
-            <rect x="0" y="0" width="370" height="470" fill="#243026" />
-            <rect x="400" y="0" width="600" height="490" fill="#323e32" />
-            <rect x="0" y="550" width="1000" height="150" fill="#212a22" />
-          </pattern>
+          <filter id="glow-selected" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#f59e0b" floodOpacity="0.9" />
+          </filter>
         </defs>
 
-        {/* MAP BACKGROUND */}
-        <rect width="1000" height="700" fill="url(#sat-ground)" />
+        {/* 1. PHOTOREALISTIC SATELLITE BASEMAP (HIGH QUALITY) */}
+        <image
+          href={getBasemapUrl()}
+          x="0"
+          y="0"
+          width="1000"
+          height="700"
+          preserveAspectRatio="none"
+          style={{
+            filter: 'contrast(1.08) brightness(1.02) saturate(1.12)',
+          }}
+        />
 
-        {/* FIELD 1: PLOT N2 (MAIZE WAXY) */}
+        {/* 2. FIELD 1: PLOT N2 (MAIZE WAXY) */}
         <g
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
@@ -452,12 +673,14 @@ export function XFarmMap({
         >
           <polygon
             points="420,140 760,145 745,505 440,490"
-            fill={selectedField?.id === 'plot-n2' ? '#eab30866' : '#eab30844'}
+            fill={selectedField?.id === 'plot-n2' ? '#eab30844' : '#eab30822'}
             stroke="#f59e0b"
-            strokeWidth={selectedField?.id === 'plot-n2' ? '4' : '2.5'}
+            strokeWidth={selectedField?.id === 'plot-n2' ? '3.5' : '2'}
+            filter={selectedField?.id === 'plot-n2' ? 'url(#glow-selected)' : undefined}
           />
-          {/* Tramlines / Guidance Lines on Plot N2 */}
-          <g opacity="0.85">
+
+          {/* Animated Tramlines / Guidance Lines on Plot N2 */}
+          <g opacity="0.9">
             <line x1="550" y1="145" x2="540" y2="495" stroke="#4ade80" strokeWidth="1.8" />
             <line x1="565" y1="145" x2="555" y2="495" stroke="#4ade80" strokeWidth="1.8" />
             <line x1="580" y1="145" x2="570" y2="495" stroke="#4ade80" strokeWidth="1.8" />
@@ -476,13 +699,13 @@ export function XFarmMap({
             </text>
           </g>
 
-          <rect x="430" y="150" width="115" height="24" rx="5" fill="rgba(15, 23, 42, 0.85)" />
+          <rect x="430" y="150" width="125" height="24" rx="5" fill="rgba(15, 23, 42, 0.9)" />
           <text x="438" y="166" fontSize="11" fontWeight="700" fill="#ffffff">
             🌾 Plot N2 (4.80 ha)
           </text>
         </g>
 
-        {/* FIELD 2: FIELD OVEST (SOFT WHEAT) */}
+        {/* 3. FIELD 2: FIELD OVEST (SOFT WHEAT) */}
         <g
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
@@ -495,17 +718,18 @@ export function XFarmMap({
         >
           <polygon
             points="140,200 370,210 365,470 120,460"
-            fill={selectedField?.id === 'field-ovest' ? '#df9f3266' : '#df9f3244'}
+            fill={selectedField?.id === 'field-ovest' ? '#df9f3255' : '#df9f3222'}
             stroke="#f59e0b"
-            strokeWidth={selectedField?.id === 'field-ovest' ? '4' : '2.5'}
+            strokeWidth={selectedField?.id === 'field-ovest' ? '3.5' : '2'}
+            filter={selectedField?.id === 'field-ovest' ? 'url(#glow-selected)' : undefined}
           />
-          <rect x="150" y="215" width="125" height="24" rx="5" fill="rgba(15, 23, 42, 0.85)" />
+          <rect x="150" y="215" width="130" height="24" rx="5" fill="rgba(15, 23, 42, 0.9)" />
           <text x="158" y="231" fontSize="11" fontWeight="700" fill="#ffffff">
             🌾 Field OVEST (6.2 ha)
           </text>
         </g>
 
-        {/* FIELD 3: TETTO PATTA (SOYBEAN) */}
+        {/* 4. FIELD 3: TETTO PATTA (SOYBEAN) */}
         <g
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
@@ -518,17 +742,17 @@ export function XFarmMap({
         >
           <polygon
             points="770,150 970,155 960,490 760,480"
-            fill={selectedField?.id === 'tetto-patta' ? '#65a30d66' : '#65a30d44'}
+            fill={selectedField?.id === 'tetto-patta' ? '#65a30d55' : '#65a30d22'}
             stroke="#84cc16"
-            strokeWidth={selectedField?.id === 'tetto-patta' ? '4' : '2.5'}
+            strokeWidth={selectedField?.id === 'tetto-patta' ? '3.5' : '2'}
           />
-          <rect x="780" y="165" width="115" height="24" rx="5" fill="rgba(15, 23, 42, 0.85)" />
+          <rect x="780" y="165" width="125" height="24" rx="5" fill="rgba(15, 23, 42, 0.9)" />
           <text x="788" y="181" fontSize="11" fontWeight="700" fill="#ffffff">
             🌱 Tetto Patta (3.4 ha)
           </text>
         </g>
 
-        {/* FIELD 4: CONFRERIA SUD (TOMATO) */}
+        {/* 5. FIELD 4: CONFRERIA SUD (TOMATO) */}
         <g
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
@@ -541,17 +765,17 @@ export function XFarmMap({
         >
           <polygon
             points="240,515 375,520 360,680 180,670"
-            fill={selectedField?.id === 'confreria-sud' ? '#dc262666' : '#dc262644'}
+            fill={selectedField?.id === 'confreria-sud' ? '#dc262655' : '#dc262622'}
             stroke="#ef4444"
-            strokeWidth={selectedField?.id === 'confreria-sud' ? '4' : '2.5'}
+            strokeWidth={selectedField?.id === 'confreria-sud' ? '3.5' : '2'}
           />
-          <rect x="235" y="530" width="130" height="24" rx="5" fill="rgba(15, 23, 42, 0.85)" />
+          <rect x="235" y="530" width="135" height="24" rx="5" fill="rgba(15, 23, 42, 0.9)" />
           <text x="243" y="546" fontSize="11" fontWeight="700" fill="#ffffff">
             🍅 Confreria Sud (5.1 ha)
           </text>
         </g>
 
-        {/* FIELD 5: VILLA OLDOFREDI VINEYARD */}
+        {/* 6. FIELD 5: VILLA OLDOFREDI VINEYARD */}
         <g
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
@@ -564,18 +788,18 @@ export function XFarmMap({
         >
           <polygon
             points="420,520 730,535 710,685 410,670"
-            fill={selectedField?.id === 'villa-oldofredi' ? '#8b5cf666' : '#8b5cf644'}
+            fill={selectedField?.id === 'villa-oldofredi' ? '#8b5cf655' : '#8b5cf622'}
             stroke="#a855f7"
-            strokeWidth={selectedField?.id === 'villa-oldofredi' ? '4' : '2.5'}
+            strokeWidth={selectedField?.id === 'villa-oldofredi' ? '3.5' : '2'}
           />
-          <rect x="430" y="540" width="135" height="24" rx="5" fill="rgba(15, 23, 42, 0.85)" />
+          <rect x="430" y="540" width="140" height="24" rx="5" fill="rgba(15, 23, 42, 0.9)" />
           <text x="438" y="556" fontSize="11" fontWeight="700" fill="#ffffff">
             🍇 Oldofredi Vite (2.8 ha)
           </text>
         </g>
 
         {/* DYNAMIC NEW FIELDS (IMPORTED OR DRAWN) */}
-        {fields.slice(5).map((f, idx) => (
+        {fields.slice(5).map((f) => (
           <g
             key={f.id}
             style={{ cursor: 'pointer' }}
@@ -725,6 +949,17 @@ export function XFarmMap({
                 <span>{c.name}</span>
               </div>
             ))}
+            <div
+              style={{
+                fontSize: '9px',
+                color: '#94a3b8',
+                marginTop: '6px',
+                paddingTop: '6px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+              }}
+            >
+              Google &middot; Imagery &copy;2023 CNES / Airbus, Maxar Technologies
+            </div>
           </div>
         )}
       </div>
@@ -816,6 +1051,7 @@ export function XFarmMap({
         onClose={() => setIsCreateModalOpen(false)}
         calculatedAreaHa={calculatedDrawAreaHa}
         vertexCount={drawVertices.length}
+        groups={['NORTH', 'Conti', 'SOUTH', 'EAST']}
         onSaveField={handleSaveDrawnField}
       />
     </div>

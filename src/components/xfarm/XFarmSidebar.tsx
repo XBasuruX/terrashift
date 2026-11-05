@@ -1,6 +1,7 @@
 'use client';
 import {
   Map,
+  Layers,
   Tractor,
   Droplets,
   Sprout,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 
 export type XFarmTab =
+  | 'fields'
   | 'map'
   | 'fleet'
   | 'sensors'
@@ -37,6 +39,7 @@ export function XFarmSidebar({
   onToggleFleet,
 }: XFarmSidebarProps) {
   const tabs = [
+    { id: 'fields', label: 'Fields', icon: Layers, title: 'Field gallery' },
     { id: 'map', label: 'Map', icon: Map, title: 'Farm Map & Fields' },
     { id: 'fleet', label: 'Fleet', icon: Tractor, title: 'Machinery & Telemetry', badge: 'Active' },
     { id: 'sensors', label: 'Sensors', icon: Droplets, title: 'Soil Moisture & Weather' },

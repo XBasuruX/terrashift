@@ -3,12 +3,14 @@ const nextConfig = {
   serverExternalPackages: ['cesium'],
   async rewrites() {
     if (!process.env.BACKEND_URL) return [];
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.BACKEND_URL}/api/:path*`,
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/api/:path*',
+          destination: `${process.env.BACKEND_URL}/api/:path*`,
+        },
+      ],
+    };
   },
 };
 
