@@ -37,6 +37,7 @@ export function FieldDetailDrawer({
 
   const it = lang === 'IT';
   const [tab, setTab] = useState(0);
+  const [mapStyle, setMapStyle] = useState<'satellite' | 'snazzy'>('satellite');
   const [year, setYear] = useState<number | null>(null);
   const [crop, setCrop] = useState('');
   const years = [...new Set(field.rotations.map((r) => r.year))].sort((a, b) => b - a);
@@ -49,7 +50,65 @@ export function FieldDetailDrawer({
   return (
     <section className="parcel-detail">
       <div className="parcel-detail-map" style={{ position: 'relative' }}>
-        <ParcelPreview field={field} detail />
+        <ParcelPreview field={field} detail mode={mapStyle} />
+
+        {/* SATELLITE VS SNAZZY MAPS SWITCHER */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            right: '12px',
+            zIndex: 15,
+            display: 'flex',
+            background: 'rgba(15, 23, 42, 0.92)',
+            borderRadius: '6px',
+            padding: '3px',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setMapStyle('satellite')}
+            style={{
+              background: mapStyle === 'satellite' ? '#22c55e' : 'transparent',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '3px 8px',
+              fontSize: '11px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            <span>🛰️</span>
+            <span>Satellite</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMapStyle('snazzy')}
+            style={{
+              background: mapStyle === 'snazzy' ? '#22c55e' : 'transparent',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '3px 8px',
+              fontSize: '11px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            <span>🗺️</span>
+            <span>Snazzy Maps</span>
+          </button>
+        </div>
+
         <div className="parcel-metadata">
           <button onClick={onClose} aria-label={it ? 'Torna ai campi' : 'Back to fields'}>
             <ArrowLeft size={19} />
@@ -72,13 +131,15 @@ export function FieldDetailDrawer({
           {field.name}
         </strong>
         <small className="map-credit">
-          {field.name.includes('Plot N2')
-            ? 'High-Resolution Aerial Orthophoto · Maxar'
-            : inCuneo(field.center)
-              ? '© Arpa Piemonte · Regional Imagery'
-              : inSriLanka(field.center)
-                ? 'NASA Blue Marble · regional context'
-                : 'Farm coordinates'}
+          {mapStyle === 'snazzy'
+            ? 'Snazzy Maps · Cartographic Vector Cadastre'
+            : field.name.includes('Plot N2')
+              ? 'High-Resolution Aerial Orthophoto · Maxar'
+              : inCuneo(field.center)
+                ? '© Arpa Piemonte · Regional Imagery'
+                : inSriLanka(field.center)
+                  ? 'NASA Blue Marble · regional context'
+                  : 'Farm coordinates'}
         </small>
       </div>
 

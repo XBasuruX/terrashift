@@ -29,7 +29,14 @@ import {
 import { RulerTool } from './RulerTool';
 import { CreateFieldModal } from './CreateFieldModal';
 
-export type MapImageryLayer = 'satellite' | 'regional' | 'plot-n2' | 'ortho' | 'ndvi';
+export type MapImageryLayer =
+  | 'satellite'
+  | 'snazzy'
+  | 'hybrid'
+  | 'regional'
+  | 'plot-n2'
+  | 'ortho'
+  | 'ndvi';
 
 interface XFarmMapProps {
   fields: XFarmField[];
@@ -228,9 +235,11 @@ export function XFarmMap({
     setDrawVertices([]);
   };
 
-  // Determine current high-resolution photographic basemap
+  // Determine current high-resolution photographic or cartographic basemap
   const getBasemapUrl = () => {
     switch (activeLayer) {
+      case 'snazzy':
+        return '/images/snazzy-map-cuneo.svg';
       case 'ndvi':
         return '/images/xfarm-ndvi-hd.jpg';
       case 'regional':
@@ -239,6 +248,7 @@ export function XFarmMap({
         return '/images/xfarm-plot-n2-hd.jpg';
       case 'ortho':
         return '/data/cuneo-ortho.webp';
+      case 'hybrid':
       case 'satellite':
       default:
         return '/images/xfarm-satellite-desktop-hd.jpg';
@@ -482,7 +492,57 @@ export function XFarmMap({
                 }}
               >
                 <span>🛰️</span>
-                <span>Original xFarm Satellite (HD)</span>
+                <span>Satellite HD (Aerial Orthophoto)</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setLayer('snazzy');
+                  setShowLayerMenu(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '7px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: activeLayer === 'snazzy' ? '#dcfce7' : 'transparent',
+                  color: activeLayer === 'snazzy' ? '#15803d' : '#1e293b',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                <span>🗺️</span>
+                <span>Snazzy Maps (Vector Cadastre & Roads)</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setLayer('hybrid');
+                  setShowLayerMenu(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '7px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: activeLayer === 'hybrid' ? '#dcfce7' : 'transparent',
+                  color: activeLayer === 'hybrid' ? '#15803d' : '#1e293b',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                <span>🌐</span>
+                <span>Hybrid (Satellite + Snazzy Overlay)</span>
               </button>
 
               <button
@@ -660,6 +720,19 @@ export function XFarmMap({
           }}
         />
 
+        {/* HYBRID OVERLAY: Snazzy Cartographic Roads, Rivers & Town Badges */}
+        {activeLayer === 'hybrid' && (
+          <image
+            href="/images/snazzy-overlay.svg"
+            x="0"
+            y="0"
+            width="1000"
+            height="700"
+            preserveAspectRatio="none"
+            opacity="0.95"
+          />
+        )}
+
         {/* 2. FIELD 1: PLOT N2 (MAIZE WAXY) */}
         <g
           style={{ cursor: 'pointer' }}
@@ -678,6 +751,28 @@ export function XFarmMap({
             strokeWidth={selectedField?.id === 'plot-n2' ? '3.5' : '2'}
             filter={selectedField?.id === 'plot-n2' ? 'url(#glow-selected)' : undefined}
           />
+
+          {/* LAND AREA DETAILS: Vertex measurement pins & edge distances */}
+          {selectedField?.id === 'plot-n2' && (
+            <g>
+              <circle cx="420" cy="140" r="5" fill="#ffffff" stroke="#f59e0b" strokeWidth="2.5" />
+              <circle cx="760" cy="145" r="5" fill="#ffffff" stroke="#f59e0b" strokeWidth="2.5" />
+              <circle cx="745" cy="505" r="5" fill="#ffffff" stroke="#f59e0b" strokeWidth="2.5" />
+              <circle cx="440" cy="490" r="5" fill="#ffffff" stroke="#f59e0b" strokeWidth="2.5" />
+
+              <rect x="560" y="130" width="65" height="18" rx="4" fill="rgba(15,23,42,0.92)" stroke="#f59e0b" strokeWidth="1" />
+              <text x="592" y="143" textAnchor="middle" fontSize="10" fontWeight="700" fill="#ffffff">201.00m</text>
+
+              <rect x="735" y="315" width="65" height="18" rx="4" fill="rgba(15,23,42,0.92)" stroke="#f59e0b" strokeWidth="1" />
+              <text x="767" y="328" textAnchor="middle" fontSize="10" fontWeight="700" fill="#ffffff">340.00m</text>
+
+              <rect x="565" y="490" width="65" height="18" rx="4" fill="rgba(15,23,42,0.92)" stroke="#f59e0b" strokeWidth="1" />
+              <text x="597" y="503" textAnchor="middle" fontSize="10" fontWeight="700" fill="#ffffff">295.00m</text>
+
+              <rect x="390" y="305" width="65" height="18" rx="4" fill="rgba(15,23,42,0.92)" stroke="#f59e0b" strokeWidth="1" />
+              <text x="422" y="318" textAnchor="middle" fontSize="10" fontWeight="700" fill="#ffffff">180.00m</text>
+            </g>
+          )}
 
           {/* Animated Tramlines / Guidance Lines on Plot N2 */}
           <g opacity="0.9">
@@ -933,6 +1028,95 @@ export function XFarmMap({
           </g>
         )}
       </svg>
+
+      {/* FLOATING DETAILED LAND AREA PREVIEW HUD */}
+      {selectedField && !isRulerActive && !isDrawingField && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '75px',
+            left: '75px',
+            zIndex: 30,
+            background: 'rgba(15, 23, 42, 0.94)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '10px',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            padding: '12px 16px',
+            color: '#ffffff',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            maxWidth: '340px',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '10.5px', fontWeight: 800, color: '#f59e0b', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              ✦ Determined Land Area
+            </span>
+            <button
+              onClick={() => onSelectField(null as any)}
+              style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', padding: '2px 6px' }}
+              title="Close detail preview"
+            >
+              ✕
+            </button>
+          </div>
+          <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>
+            {selectedField.name}
+          </h4>
+          <p style={{ margin: '0 0 10px 0', fontSize: '12px', color: '#cbd5e1' }}>
+            {selectedField.currentCrop} ({selectedField.currentVariety || 'Selected Variety'}) &middot; {selectedField.farmingType}
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+            <div style={{ background: 'rgba(255,255,255,0.06)', padding: '6px 8px', borderRadius: '6px' }}>
+              <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}>Total Surface</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#22c55e' }}>{selectedField.surface_ha.toFixed(2)} ha</div>
+              <div style={{ fontSize: '9.5px', color: '#64748b' }}>{(selectedField.surface_ha * 10000).toLocaleString()} m²</div>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.06)', padding: '6px 8px', borderRadius: '6px' }}>
+              <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}>Soil Moisture</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#38bdf8' }}>32.4% Optimal</div>
+              <div style={{ fontSize: '9.5px', color: '#64748b' }}>Sentek 60cm probe</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => {
+                const el = document.querySelector('.parcel-detail');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              style={{
+                flex: 1,
+                background: '#22c55e',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '6px 10px',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Full Operations Dossier →
+            </button>
+            <button
+              onClick={() => setLayer(activeLayer === 'snazzy' ? 'satellite' : 'snazzy')}
+              style={{
+                background: 'rgba(255,255,255,0.12)',
+                color: '#ffffff',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '6px',
+                padding: '6px 10px',
+                fontSize: '11px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {activeLayer === 'snazzy' ? '🛰️ View Sat' : '🗺️ View Snazzy'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* FLOATING CROP LEGEND (BOTTOM-LEFT - SCREENSHOT 4) */}
       <div className="xfarm-crop-legend">

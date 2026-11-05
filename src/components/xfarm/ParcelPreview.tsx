@@ -8,7 +8,15 @@ import {
 } from './parcels';
 import type { XFarmField } from './xfarmData';
 
-export function ParcelPreview({ field, detail = false }: { field: XFarmField; detail?: boolean }) {
+export function ParcelPreview({
+  field,
+  detail = false,
+  mode = 'satellite',
+}: {
+  field: XFarmField;
+  detail?: boolean;
+  mode?: 'satellite' | 'snazzy';
+}) {
   const bounded = field.coordinates.length >= 3;
   const cuneo = inCuneo(field.center),
     sriLanka = inSriLanka(field.center);
@@ -38,7 +46,16 @@ export function ParcelPreview({ field, detail = false }: { field: XFarmField; de
         />
       )}
 
-      {field.id === 'plot-n2' || field.name.includes('Plot N2') ? (
+      {mode === 'snazzy' ? (
+        <image
+          href="/images/snazzy-map-cuneo.svg"
+          x={0}
+          y={0}
+          width="1000"
+          height="700"
+          preserveAspectRatio="none"
+        />
+      ) : field.id === 'plot-n2' || field.name.includes('Plot N2') ? (
         <image
           href="/images/plot-n2-satellite-hd.jpg"
           x={vx}

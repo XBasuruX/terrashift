@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
+  <defs>
+    <style>
+      .road-prim-casing { stroke: rgba(226, 155, 20, 0.85); stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+      .road-prim { stroke: #ffffff; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .road-sec-casing { stroke: rgba(100, 116, 139, 0.8); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .road-sec { stroke: #ffffff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .road-track { stroke: rgba(255, 255, 255, 0.6); stroke-width: 1.5; stroke-dasharray: 4,3; fill: none; }
+      .place-badge { fill: rgba(15, 23, 42, 0.88); stroke: rgba(255, 255, 255, 0.6); stroke-width: 1.2; rx: 5; }
+      .place-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 800; fill: #ffffff; letter-spacing: 0.08em; text-anchor: middle; }
+      .sub-badge { fill: rgba(15, 23, 42, 0.8); stroke: rgba(255, 255, 255, 0.4); stroke-width: 1; rx: 4; }
+      .sub-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 600; fill: #e2e8f0; text-anchor: middle; }
+      .street-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #ffffff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
+      .waterway-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 700; fill: #38bdf8; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
+      .cadastre-num { font-family: monospace; font-size: 8.5px; fill: rgba(255, 255, 255, 0.7); font-weight: bold; }
+    </style>
+  </defs>
+
+  <!-- Arterial roads: SP422 / SS705 with glowing contrast -->
+  <path d="M 0 500 Q 180 503, 382 507 T 740 550 T 1000 530" class="road-prim-casing" fill="none" />
+  <path d="M 0 500 Q 180 503, 382 507 T 740 550 T 1000 530" class="road-prim" fill="none" />
+
+  <!-- Roundabouts -->
+  <circle cx="382" cy="507" r="13" fill="#e29b14" stroke="#ffffff" stroke-width="2" />
+  <circle cx="382" cy="507" r="6" fill="#15803d" />
+
+  <circle cx="740" cy="550" r="13" fill="#e29b14" stroke="#ffffff" stroke-width="2" />
+  <circle cx="740" cy="550" r="6" fill="#ffffff" />
+
+  <!-- Secondary Roads: Via Concadalbero & Via Ercole Oldofredi Tadini -->
+  <path d="M 382 507 L 380 320 L 375 140 L 370 0" class="road-sec-casing" fill="none" />
+  <path d="M 382 507 L 380 320 L 375 140 L 370 0" class="road-sec" fill="none" />
+
+  <path d="M 382 507 Q 480 450, 610 350 T 800 240 T 1000 120" class="road-sec-casing" fill="none" />
+  <path d="M 382 507 Q 480 450, 610 350 T 800 240 T 1000 120" class="road-sec" fill="none" />
+
+  <!-- Local Farm Tracks -->
+  <path d="M 160 210 L 370 215" class="road-track" />
+  <path d="M 140 420 L 365 425" class="road-track" />
+  <path d="M 380 250 L 580 255" class="road-track" />
+  <path d="M 375 490 L 570 495" class="road-track" />
+  <path d="M 450 100 L 580 105" class="road-track" />
+  <path d="M 440 230 L 575 235" class="road-track" />
+
+  <!-- Water Labels -->
+  <text x="860" y="660" class="waterway-txt" transform="rotate(-12, 860, 660)">Fiume Stura di Demonte</text>
+  <text x="180" y="478" class="waterway-txt">Canale Idrovora</text>
+
+  <!-- Street Labels -->
+  <text x="250" y="493" class="street-txt">SP422 (Strada Provinciale 422)</text>
+  <text x="365" y="300" class="street-txt" transform="rotate(-90, 365, 300)">Via Concadalbero</text>
+  <text x="470" y="435" class="street-txt" transform="rotate(-35, 470, 435)">Via Ercole Oldofredi Tadini</text>
+  <text x="820" y="538" class="street-txt">SS705 (Tangenziale Ovest Cuneo)</text>
+
+  <!-- Town Labels -->
+  <g transform="translate(480, 630)">
+    <rect x="-60" y="-13" width="120" height="26" class="place-badge" />
+    <text x="0" y="4" class="place-text">CONFRERIA</text>
+  </g>
+  <g transform="translate(830, 420)">
+    <rect x="-50" y="-13" width="100" height="26" class="place-badge" />
+    <text x="0" y="4" class="place-text">CERIALDO</text>
+  </g>
+  <g transform="translate(510, 150)">
+    <rect x="-45" y="-11" width="90" height="22" class="sub-badge" />
+    <text x="0" y="4" class="sub-text">Tetto Patta</text>
+  </g>
+  <g transform="translate(210, 210)">
+    <rect x="-45" y="-11" width="90" height="22" class="sub-badge" />
+    <text x="0" y="4" class="sub-text">Tetto Farina</text>
+  </g>
+  <g transform="translate(700, 310)">
+    <rect x="-60" y="-11" width="120" height="22" class="sub-badge" />
+    <text x="0" y="4" class="sub-text">Villa Oldofredi</text>
+  </g>
+
+  <!-- Cadastral identifiers -->
+  <text x="410" y="275" class="cadastre-num">Cadastre Fgl. 42 / Part. 104</text>
+  <text x="200" y="235" class="cadastre-num">Cadastre Fgl. 42 / Part. 88</text>
+  <text x="470" y="115" class="cadastre-num">Cadastre Fgl. 41 / Part. 32</text>
+  <text x="640" y="365" class="cadastre-num">Cadastre Fgl. 42 / Part. 119</text>
+</svg>

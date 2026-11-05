@@ -4,7 +4,7 @@ import './xfarm.css';
 import './parcels.css';
 import { XFarmHeader, type ViewportMode } from './XFarmHeader';
 import { XFarmSidebar, type XFarmTab } from './XFarmSidebar';
-import { XFarmMap } from './XFarmMap';
+import { XFarmMap, type MapImageryLayer } from './XFarmMap';
 import { FleetDrawer } from './FleetDrawer';
 import { SensorDrawer } from './SensorDrawer';
 import { FieldDetailDrawer } from './FieldDetailDrawer';
@@ -31,10 +31,10 @@ import { MapExplorer } from '../MapExplorer';
 import { Shell } from '../Shell';
 import { useTerra } from '@/lib/store';
 
-export function XFarmShell() {
+export function XFarmShell({ embedded = false }: { embedded?: boolean } = {}) {
   const [activeTab, setActiveTab] = useState<XFarmTab>('map');
   const [activePilot, setActivePilot] = useState<string>('Cuneo / Piedmont Farm');
-  const [activeLayer, setActiveLayer] = useState<'satellite' | 'regional' | 'plot-n2' | 'ortho' | 'ndvi'>('satellite');
+  const [activeLayer, setActiveLayer] = useState<MapImageryLayer>('satellite');
   const [lang, setLang] = useState<'EN' | 'IT'>('EN');
   const [viewportMode, setViewportMode] = useState<ViewportMode>('desktop');
   const [showTerraShiftSuite, setShowTerraShiftSuite] = useState(false);
@@ -189,24 +189,189 @@ export function XFarmShell() {
       }}
     >
       {/* 1. TOP HEADER BAR */}
-      <XFarmHeader
-        onSearch={handleSearch}
-        activePilot={activePilot}
-        onSelectPilot={(pilot) => {
-          setActivePilot(pilot);
-          if (pilot.includes('Anuradhapura')) {
-            setIs3DMode(true);
-          } else {
-            setIs3DMode(false);
-          }
-        }}
-        onOpenNotifications={() => setIsNotificationsOpen(!isNotificationsOpen)}
-        isNotificationsOpen={isNotificationsOpen}
-        lang={lang}
-        onChangeLang={setLang}
-        viewportMode={viewportMode}
-        onChangeViewport={setViewportMode}
-      />
+      {embedded ? (
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '12px 20px',
+            background: 'linear-gradient(135deg, #1b261e 0%, #111a14 100%)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em' }}>
+                  Field Operations &amp; Parcels
+                </span>
+                <span
+                  style={{
+                    background: '#15803d',
+                    color: '#ffffff',
+                    fontSize: '10.5px',
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: '999px',
+                  }}
+                >
+                  LIVE TELEMETRY
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '4px', fontSize: '11.5px', color: '#94a3b8' }}>
+                <span>🌾 5 Parcels (22.3 ha)</span>
+                <span>•</span>
+                <span style={{ color: '#a3e635' }}>🚜 JD 6175R Active (6.0 km/h)</span>
+                <span>•</span>
+                <span style={{ color: '#38bdf8' }}>💧 3 Sentek Probes Online</span>
+                <span>•</span>
+                <span>🌧️ 63.7 mm Rain (30d)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* LAYER SWITCHER & ACTIONS */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                background: 'rgba(255, 255, 255, 0.08)',
+                padding: '3px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+              }}
+            >
+              {[
+                { id: 'satellite', label: '🛰️ Satellite HD' },
+                { id: 'snazzy', label: '🗺️ Snazzy Maps' },
+                { id: 'hybrid', label: '🌐 Hybrid' },
+                { id: 'ndvi', label: '🌿 NDVI' },
+              ].map((l) => (
+                <button
+                  key={l.id}
+                  type="button"
+                  onClick={() => setActiveLayer(l.id as any)}
+                  style={{
+                    background: activeLayer === l.id ? 'var(--color-primary, #22c55e)' : 'transparent',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setIsFleetOpen(!isFleetOpen)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: isFleetOpen ? '#15803d' : 'rgba(255, 255, 255, 0.1)',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontSize: '11.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <span>🚜</span>
+              <span>Fleet (8)</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedProbe(probes[0])}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: selectedProbe ? '#0284c7' : 'rgba(255, 255, 255, 0.1)',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontSize: '11.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <span>💧</span>
+              <span>Probes (3)</span>
+            </button>
+
+            <button
+              onClick={() => setIsScoutingOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: isScoutingOpen ? '#e11d48' : 'rgba(255, 255, 255, 0.1)',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontSize: '11.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <span>📝</span>
+              <span>Notes (19)</span>
+            </button>
+
+            <button
+              onClick={() => setIsShapefileOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontSize: '11.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <span>📁</span>
+              <span>Import Shapefile</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <XFarmHeader
+          onSearch={handleSearch}
+          activePilot={activePilot}
+          onSelectPilot={(pilot) => {
+            setActivePilot(pilot);
+            if (pilot.includes('Anuradhapura')) {
+              setIs3DMode(true);
+            } else {
+              setIs3DMode(false);
+            }
+          }}
+          onOpenNotifications={() => setIsNotificationsOpen(!isNotificationsOpen)}
+          isNotificationsOpen={isNotificationsOpen}
+          lang={lang}
+          onChangeLang={setLang}
+          viewportMode={viewportMode}
+          onChangeViewport={setViewportMode}
+        />
+      )}
 
       {/* 2. MAIN BODY (LEFT DOCK + STAGE) */}
       <div className="xfarm-body" style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
@@ -507,32 +672,53 @@ export function XFarmShell() {
     </div>
   );
 
-  // VIEWPORT FRAME SWITCHER (DESKTOP, TABLET IPAD, MOBILE IPHONE)
-  if (viewportMode === 'tablet') {
-    return (
-      <div className="xfarm-device-wrapper">
-        <div className="xfarm-tablet-frame">
-          <div className="xfarm-tablet-bezel">{renderAppContent()}</div>
+  // VIEWPORT FRAME SWITCHER
+  if (!embedded) {
+    if (viewportMode === 'tablet') {
+      return (
+        <div className="xfarm-device-wrapper">
+          <div className="xfarm-tablet-frame">
+            <div className="xfarm-tablet-bezel">{renderAppContent()}</div>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+
+    if (viewportMode === 'mobile') {
+      return (
+        <div className="xfarm-device-wrapper">
+          <div className="xfarm-mobile-frame">
+            <div className="xfarm-dynamic-island" />
+            <div className="xfarm-mobile-bezel">{renderAppContent()}</div>
+          </div>
+        </div>
+      );
+    }
   }
 
-  if (viewportMode === 'mobile') {
-    return (
-      <div className="xfarm-device-wrapper">
-        <div className="xfarm-mobile-frame">
-          <div className="xfarm-dynamic-island" />
-          <div className="xfarm-mobile-bezel">{renderAppContent()}</div>
-        </div>
-      </div>
-    );
-  }
-
-  return <div className="xfarm-shell">{renderAppContent()}</div>;
+  return (
+    <div
+      className="xfarm-shell"
+      style={
+        embedded
+          ? {
+              width: '100%',
+              height: 'calc(100vh - 140px)',
+              minHeight: '680px',
+              position: 'relative',
+              overflow: 'hidden',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }
+          : undefined
+      }
+    >
+      {renderAppContent()}
+    </div>
+  );
 }
 
-// Export FieldOperations for Shell.tsx backward compatibility
+// Export FieldOperations for Shell.tsx integration
 export function FieldOperations() {
-  return <XFarmShell />;
+  return <XFarmShell embedded={true} />;
 }

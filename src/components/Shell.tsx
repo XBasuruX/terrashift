@@ -32,19 +32,24 @@ import { DecisionBrief } from './DecisionBrief';
 import { Notice } from './UI';
 const nav: { id: View; name: string; icon: typeof Leaf; number: string }[] = [
   { id: 'overview', name: 'Overview', icon: LayoutDashboard, number: '01' },
-  { id: 'explorer', name: 'Earth Explorer', icon: Globe2, number: '02' },
-  { id: 'farm', name: 'My Farm', icon: Tractor, number: '03' },
-  { id: 'rotations', name: 'Rotation Studio', icon: Rows3, number: '04' },
-  { id: 'climate', name: 'Climate Lab', icon: FlaskConical, number: '05' },
-  { id: 'evidence', name: 'Evidence & Sources', icon: LibraryBig, number: '06' },
-  { id: 'brief', name: 'Decision Brief', icon: FileText, number: '07' },
-  { id: 'operations', name: 'Field Operations', icon: Leaf, number: '08' },
+  { id: 'operations', name: 'Field Operations & Parcels', icon: Tractor, number: '02' },
+  { id: 'explorer', name: 'Earth Explorer (3D)', icon: Globe2, number: '03' },
+  { id: 'farm', name: 'Farm Settings & Soil', icon: Rows3, number: '04' },
+  { id: 'rotations', name: 'Rotation Studio', icon: Rows3, number: '05' },
+  { id: 'climate', name: 'Climate Lab', icon: FlaskConical, number: '06' },
+  { id: 'evidence', name: 'Evidence & Sources', icon: LibraryBig, number: '07' },
+  { id: 'brief', name: 'Decision Brief', icon: FileText, number: '08' },
 ];
 const tourSteps: [View, string, string][] = [
   [
     'overview',
     'Start with the landscape',
     'Choose a sample farm. Read the environmental record and check the active data mode before interpreting a chart.',
+  ],
+  [
+    'operations',
+    'Manage Your Fields & Fleet',
+    'Explore high-resolution satellite imagery, toggle Snazzy Maps cartographic styles, inspect soil moisture probes, track tractor guidance tramlines, and log field operations.',
   ],
   [
     'explorer',
